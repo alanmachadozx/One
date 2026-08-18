@@ -1,5 +1,4 @@
 import queue
-import sys
 from vosk import Model, KaldiRecognizer
 import sounddevice as sd
 from  listener import *
@@ -16,3 +15,5 @@ except Exception:
 device_info = sd.query_devices(None, "input") 
 samplerate = int(device_info["default_samplerate"])
 rec = KaldiRecognizer(model, samplerate)
+
+start_listening(rec, samplerate, q)
