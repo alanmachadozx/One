@@ -13,7 +13,6 @@ except Exception:
 
 #looks for the default linux microphone settings
 device_info = sd.query_devices(None, "input") 
-samplerate = int(device_info["default_samplerate"])
-rec = KaldiRecognizer(model, samplerate)
+rec = KaldiRecognizer(model, 16000)
 
-start_listening(rec, samplerate, q)
+start_listening(rec, 16000, q)

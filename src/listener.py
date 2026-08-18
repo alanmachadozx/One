@@ -12,7 +12,7 @@ def start_listening( rec, samplerate, q):
             q.put(bytes(indata))
                  
         try:
-            with sd.RawInputStream(samplerate= samplerate, blocksize= 8000, dtype= "int16", channels= 1, callback= callback):
+            with sd.RawInputStream(samplerate= 16000, blocksize= 8000, dtype= "int16", channels= 1, callback= callback):
                 while True:
                     data = q.get()
             
