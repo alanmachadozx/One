@@ -1,18 +1,11 @@
 import queue
-from vosk import Model, KaldiRecognizer
 import sounddevice as sd
 from  listener import *
+from faster_whisper import WhisperModel
 
 q = queue.Queue()
 
-try:
-    model = Model("src/model")
-except Exception: 
-    print("Model folder not found!")
-    sys.exit(1)
+model = WhisperModel("tiny.en", device= "cpu", compute_type= "int8")
+segments = model.transcribe("test.wav", language= "en")
 
-#looks for the default linux microphone settings
-device_info = sd.query_devices(None, "input") 
-rec = KaldiRecognizer(model, 16000)
-
-start_listening(rec, 16000, q)
+start_listerning(q)
