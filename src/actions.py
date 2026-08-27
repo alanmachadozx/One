@@ -4,7 +4,7 @@ from spotify_cliente import *
 class Actions:
     def __init__(self):
         self.commands ={
-            "Open Firefox.": self.open_browser,
+            "open firefox": self.open_browser,
             "stop music": self.pause_music,
             "start music": self.start_music,
             "turn up the volume": self.up_volume,

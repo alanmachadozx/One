@@ -1,53 +1,56 @@
-import json
-import sys
 import sounddevice as sd
 from actions import *
 import numpy as np
 from faster_whisper import WhisperModel
+import webrtcvad
+import queue
 
 comands_execute = Actions()
-def start_listerning(q, samplerate, duration, frame_size, vad, model):
+vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
+q = queue.Queue()
 
-    def audio_record():
-        print("Recordinng...")
-        with sd.InputStream(samplerate= samplerate, channels= 1, dtype = "float32") as stream:
-            # return a tuple with 2 elements, read(data, overflowed), the [0] is used for select just data
-            audio = stream.read(int(samplerate * duration))[0]
-         
-        sd.wait()
-        #converts the two-dimensional(2D) audio matrix into a one-dimensional (1D) vector
-        # the faster-whisper library requires this format
-        return audio.flatten()
+SAMPLERATE = 16000
+FRAMEDURATION = 30 #ms
+FRAME_SIZE = int(SAMPLERATE * FRAMEDURATION/ 1000)
 
-    def contains_speech(audio):
-        pcm = (audio * 32768).astype(np.int16).tobytes()
+model = WhisperModel("tiny.en", device= "cpu", compute_type= "int8")
 
-        for i in range(0, len(pcm), frame_size * 2):
-            frame = pcm[i: i + frame_size * 2]
+def callback(indata, frames, time, status):
 
-            if len(frame) < frame_size * 2:
-                break
+    if status:
+        print(status)
 
-            if vad.is_speech(frame, samplerate):
-                return True
+    clear_indata = indata[:, 0]
+    clear_bytes = (clear_indata * 32768).astype(np.int16).tobytes()
 
-        return False
+    if vad.is_speech(clear_bytes,SAMPLERATE):
+        print("voz")
+        q.put(clear_indata.copy())
 
-    def transcribe_audio(audio):
-        segments, _ = model.transcribe(audio, language= "en")
-        text = None
-        
-        for segment in segments:
-            print(f"{segment.text.strip()}")
-            text = segment.text.strip()
 
-        return text
+def transcribe_audio(audio):
+    segments, _ = model.transcribe(audio, language= "en")
+    text = None
+    
+    for segment in segments:
+        print(f"{segment.text.strip()}")
+        text = segment.text.strip()
 
-    try:
-        while True:
-            if contains_speech(audio_record()):
-                text = transcribe_audio(audio_record())
-                comands_execute.process(text)
+    return text
 
-    except KeyboardInterrupt:
-        print("program finished")
+def start_listerning():
+    print("Recordinng...")
+    with sd.InputStream(samplerate= SAMPLERATE, channels= 1, dtype = "float32", callback= callback, blocksize= FRAME_SIZE):
+
+        try:
+            while True:
+                audio_chunk = q.get()
+                
+                text = transcribe_audio(audio_chunk)
+    
+                if text:
+                    formatted_text = (text.lower().strip().replace(".", "").replace(",", ""))
+                    comands_execute.process(formatted_text)
+    
+        except KeyboardInterrupt:
+            print("program finished")
