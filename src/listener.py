@@ -15,8 +15,14 @@ FRAME_SIZE = int(SAMPLERATE * FRAMEDURATION/ 1000)
 
 model = WhisperModel("tiny.en", device= "cpu", compute_type= "int8")
 
-def callback(indata, frames, time, status):
+buffer = []
+is_recording = False
+offtime = 0
 
+#the callback function, called by the inputStream
+def callback(indata, frames, time, status):
+    global buffer, is_recording, offtime
+    
     if status:
         print(status)
 
@@ -24,10 +30,23 @@ def callback(indata, frames, time, status):
     clear_bytes = (clear_indata * 32768).astype(np.int16).tobytes()
 
     if vad.is_speech(clear_bytes,SAMPLERATE):
-        print("voz")
-        q.put(clear_indata.copy())
-
-
+        is_recording = True
+        offtime = 0
+        buffer.append(clear_indata.copy())
+        
+    else:
+        if is_recording:
+            buffer.append(clear_indata.copy())
+            offtime += 1
+            
+            if offtime > 15:
+              final_audio = np.concatenate(buffer)
+              q.put(final_audio)
+              
+              buffer.clear()
+              is_recording = False
+              offtime = 0
+              
 def transcribe_audio(audio):
     segments, _ = model.transcribe(audio, language= "en")
     text = None
@@ -44,8 +63,7 @@ def start_listerning():
 
         try:
             while True:
-                audio_chunk = q.get()
-                
+                audio_chunk = q.get()  
                 text = transcribe_audio(audio_chunk)
     
                 if text:
