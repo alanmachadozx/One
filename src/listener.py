@@ -13,7 +13,7 @@ SAMPLERATE = 16000
 FRAMEDURATION = 30 #ms
 FRAME_SIZE = int(SAMPLERATE * FRAMEDURATION/ 1000)
 
-model = WhisperModel("tiny.en", device= "cpu", compute_type= "int8")
+model = WhisperModel("base.en", device= "cpu", compute_type= "int8")
 
 buffer = []
 is_recording = False
@@ -52,7 +52,7 @@ def transcribe_audio(audio):
     text = None
     
     for segment in segments:
-        print(f"{segment.text.strip()}")
+        print(f"{segment.text.strip().replace(".", "").replace(",", "").lower()}")
         text = segment.text.strip()
 
     return text
@@ -67,7 +67,7 @@ def start_listerning():
                 text = transcribe_audio(audio_chunk)
     
                 if text:
-                    formatted_text = (text.lower().strip().replace(".", "").replace(",", ""))
+                    formatted_text = text.lower().strip().replace(".", "").replace(",", "")
                     comands_execute.process(formatted_text)
     
         except KeyboardInterrupt:
