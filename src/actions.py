@@ -10,10 +10,14 @@ class Actions:
             "turn up the volume": self.up_volume,
             "turn down the volume": self.down_volume,
             "next music": self.next_music,
+            "open kitty": self.open_terminal,
+            "update system": self.system_update
         }
         
         
     def process(self, text):
+        self.close_program(text)
+        self.play_music(text)
         if text in self.commands:
             action = self.commands[text]
             action()
@@ -32,8 +36,18 @@ class Actions:
 
                 else:
                     print("Music not found!")
-             
-         
+
+    def close_program(self, text: str):
+        if "close the" in text:
+            program = text.replace("close the", "").strip()
+            subprocess.Popen(["kill", program])
+
+    def system_update(self):
+        subprocess.Popen(["sudo", "pacman", "-Syu"])
+
+    def open_terminal(self):
+        subprocess.Popen(["kitty"])
+        
     def next_music(self):
         subprocess.Popen(["playerctl", "next"])
         
