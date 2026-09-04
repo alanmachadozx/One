@@ -38,6 +38,17 @@ The system operates using the **Producer-Consumer** pattern, ensuring the applic
 ### Step-by-Step
 
 1. Clone the repository:
-```bash
+```
 git clone https://github.com/alanmachadozx/One.git
 cd One
+```
+2. Create and activate a virtual environment (recommended):
+```
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```  
+3. Install the listed dependencies:
+```
+pip install -r requirements.txt
+```
