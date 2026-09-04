@@ -13,8 +13,22 @@ The system operates using the **Producer-Consumer** pattern, ensuring the applic
 * **Consumer (Transcription):** The main loop consumes packets from the queue and triggers the Faster Whisper model (CPU-optimized with `compute_type="int8"`) to generate clean text.
 * **Action Executor:** The formatted text is passed to the `Actions` class, which interprets and executes the corresponding system command.
 
- <!-- O que funciona hoje -->
- <!-- principais ideias de implementação para o futuro -->
+## What works today?
+
+* Command to play a specific song by saying: "play (music name)", (I will add an explanation of how to do this in the future.)
+* Commands to open Firefox and Kitty (if yours are different, you can specify the browser and terminal you use simply by changing the names in the respective functions).
+* Player control commands, such as: increase volume, decrease volume, pause music, start music, and next track.
+* The ability to update the system via voice commands is configured for Arch-based Linux distributions, but you can also modify it to suit your specific distribution.
+
+## Possible future implementations
+
+* Search for something on Google.
+* Search for videos on YouTube.
+* Search for something on Google and/or an AI (like Gemini).
+* The assistant responds to commands, something like: "OK! Opening Firefox".
+* An interface.
+* The ability to execute commands on another computer of yours. For example, you leave One running on one PC, and when you issue a command, it sends it to your other PC.
+
 ##  Installation and Configuration
 
 ### Prerequisites
