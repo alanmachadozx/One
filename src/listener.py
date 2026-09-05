@@ -40,15 +40,17 @@ def callback(indata, frames, time, status):
             offtime += 1
             
             if offtime > 15:
-              final_audio = np.concatenate(buffer)
-              q.put(final_audio)
-              
+              if len(buffer) > 30: 
+                final_audio = np.concatenate(buffer)
+                q.put(final_audio)
+                    
               buffer.clear()
               is_recording = False
               offtime = 0
               
 def transcribe_audio(audio):
-    segments, _ = model.transcribe(audio, language= "en")
+    segments, _ = model.transcribe(audio, language= "en", condition_on_previous_text=False, 
+    no_speech_threshold=0.5, vad_filter=True, initial_prompt="commands: open firefox, close, search, play")
     text = None
     
     for segment in segments:
