@@ -1,5 +1,7 @@
 import subprocess
+import webbrowser
 from spotify_cliente import *
+import urllib.parse
 
 class Actions:
     def __init__(self):
@@ -18,9 +20,18 @@ class Actions:
     def process(self, text):
         self.close_program(text)
         self.play_music(text)
+        self.web_search(text)
         if text in self.commands:
             action = self.commands[text]
             action()
+
+    def web_search(self, text:str):
+        if "search for" in text:
+            content = text.replace("search for", "").strip()
+            formatted_content = urllib.parse.quote(content)
+            url = f"https://www.google.com/search?q={formatted_content}"
+            
+            webbrowser.open(url)
 
     def play_music(self, text:str):
         if "play" in text:
