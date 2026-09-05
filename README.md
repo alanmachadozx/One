@@ -52,3 +52,7 @@ venv\Scripts\activate     # Windows
 ```
 pip install -r requirements.txt
 ```
+4. Start the main module to activate the microphone and the listening engine:
+```
+python main.py
+```
