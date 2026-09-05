@@ -22,9 +22,8 @@ The system operates using the **Producer-Consumer** pattern, ensuring the applic
 
 ## Possible future implementations
 
-* Search for something on Google.
 * Search for videos on YouTube.
-* Search for something on Google and/or an AI (like Gemini).
+* Search for something on an AI (like Gemini).
 * The assistant responds to commands, something like: "OK! Opening Firefox".
 * An interface.
 * The ability to execute commands on another computer of yours. For example, you leave One running on one PC, and when you issue a command, it sends it to your other PC.
