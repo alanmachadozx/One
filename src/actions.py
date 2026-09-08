@@ -1,10 +1,12 @@
 from cmath import e
+from http.client import responses
 import subprocess
 import webbrowser
-from spotify_cliente import *
+from apis import *
 import urllib.parse
 import pyttsx3
 
+#for the response voice
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)
 
@@ -26,10 +28,20 @@ class Actions:
         self.close_program(text)
         self.play_music(text)
         self.web_search(text)
+        self.gemini_search(text)
         if text in self.commands:
             action = self.commands[text]
             action()
 
+    def gemini_search(self, text:str):
+        if "gemini" in text:
+            engine.say("Thinking")
+            engine.runAndWait()
+            
+            content = text.replace("gemini", "").strip()
+            responses = ask_gemini(content)
+            print(responses)
+            
     def web_search(self, text:str):
         if "search for" in text:
             content = text.replace("search for", "").strip()
