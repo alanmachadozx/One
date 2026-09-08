@@ -33,21 +33,28 @@ class Actions:
             
             webbrowser.open(url)
 
+    #captures the "play music-name" command and searches for the specific song on Spotify
+    # You need Spotify for Developers and spotify-launcher.
     def play_music(self, text:str):
         if "play" in text:
-            music_name = text.replace("play", "").strip
-            result = sp.search(q= music_name, limit= 1, type="track")
+            subprocess.Popen(["spotify-launcher"])
+            music_name = text.replace("play", "", 1).strip()
+            try:
+                if music_name:
+                    result = sp.search(q= music_name, limit= 1, type="track")
+    
+                    if result:
+                        tracks = result.get("tracks", {}).get("items", [])
         
-            if result:
-                tracks = result["tracks"]["items"]
-
-                if tracks:
-                    music_uri = tracks[0]["uri"] #select the first track and your uri
-                    sp.start_playback(uris =[music_uri])
-
-                else:
-                    print("Music not found!")
-
+                        if tracks:
+                            music_uri = tracks[0]["uri"] #select the first track and your uri
+                            sp.start_playback(uris =[music_uri])
+        
+                        else:
+                            print("Music not found!")
+            except Exception:
+                print("Failed to communicate with Spotify")
+                
     def close_program(self, text: str):
         if "close the" in text:
             program = text.replace("close the", "").strip()
