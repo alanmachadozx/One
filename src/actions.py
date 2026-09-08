@@ -1,7 +1,12 @@
+from cmath import e
 import subprocess
 import webbrowser
 from spotify_cliente import *
 import urllib.parse
+import pyttsx3
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)
 
 class Actions:
     def __init__(self):
@@ -30,7 +35,9 @@ class Actions:
             content = text.replace("search for", "").strip()
             formatted_content = urllib.parse.quote(content)
             url = f"https://www.google.com/search?q={formatted_content}"
-            
+
+            engine.say(f"Searching for {content}.")
+            engine.runAndWait()
             webbrowser.open(url)
 
     #captures the "play music-name" command and searches for the specific song on Spotify
@@ -49,6 +56,8 @@ class Actions:
                         if tracks:
                             music_uri = tracks[0]["uri"] #select the first track and your uri
                             sp.start_playback(uris =[music_uri])
+                            engine.say(f"Playing {music_name}.")
+                            engine.runAndWait()
         
                         else:
                             print("Music not found!")
@@ -59,9 +68,15 @@ class Actions:
         if "close the" in text:
             program = text.replace("close the", "").strip()
             subprocess.Popen(["kill", program])
+            
+            engine.say(f"Closed {program}.")
+            engine.runAndWait()
 
     def system_update(self):
         subprocess.Popen(["sudo", "pacman", "-Syu"])
+        engine.say("Update completed.")
+        engine.runAndWait()
+        
 
     def open_terminal(self):
         subprocess.Popen(["kitty"])

@@ -4,6 +4,7 @@ import numpy as np
 from faster_whisper import WhisperModel
 import webrtcvad
 import queue
+import time
 
 comands_execute = Actions()
 vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
@@ -60,7 +61,10 @@ def transcribe_audio(audio):
     return text
 
 def start_listerning():
-    print("Recordinng...")
+    engine.say("Hello! One has started.")
+    engine.runAndWait()
+    time.sleep(2)
+    
     with sd.InputStream(samplerate= SAMPLERATE, channels= 1, dtype = "float32", callback= callback, blocksize= FRAME_SIZE):
 
         try:
@@ -73,4 +77,5 @@ def start_listerning():
                     comands_execute.process(formatted_text)
     
         except KeyboardInterrupt:
-            print("program finished")
+            engine.say("Program finished.")
+            engine.runAndWait()
