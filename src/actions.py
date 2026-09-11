@@ -13,18 +13,17 @@ engine.setProperty('rate', 150)
 class Actions:
     def __init__(self):
         self.commands ={
-            "open firefox": self.open_browser,
             "stop music": self.pause_music,
             "start music": self.start_music,
             "turn up the volume": self.up_volume,
             "turn down the volume": self.down_volume,
             "next music": self.next_music,
-            "open kitty": self.open_terminal,
             "update system": self.system_update
         }
         
         
     def process(self, text):
+        self.open_program(text)
         self.close_program(text)
         self.play_music(text)
         self.web_search(text)
@@ -75,10 +74,24 @@ class Actions:
                             print("Music not found!")
             except Exception:
                 print("Failed to communicate with Spotify")
-                
+
+    def open_program(self, text:str):
+        if "open" in text:
+            program = text.replace("open", "").strip()
+
+            try:
+               subprocess.Popen([program])
+            except Exception:
+                print(f"Failed to open {program}")
+                engine.say(f"Failed to open {program}.")
+                engine.runAndWait()
+            else:
+                engine.say(f"Opened {program}.")
+                engine.runAndWait()
+
     def close_program(self, text: str):
-        if "close the" in text:
-            program = text.replace("close the", "").strip()
+        if "close" in text:
+            program = text.replace("close", "").strip()
             subprocess.Popen(["kill", program])
             
             engine.say(f"Closed {program}.")
@@ -89,9 +102,6 @@ class Actions:
         engine.say("Update completed.")
         engine.runAndWait()
         
-
-    def open_terminal(self):
-        subprocess.Popen(["kitty"])
         
     def next_music(self):
         subprocess.Popen(["playerctl", "next"])
@@ -107,6 +117,3 @@ class Actions:
         
     def pause_music(self):
         subprocess.Popen(["playerctl", "play-pause"])
-
-    def open_browser(self):
-        subprocess.Popen(["firefox"])

@@ -14,7 +14,7 @@ SAMPLERATE = 16000
 FRAMEDURATION = 30 #ms
 FRAME_SIZE = int(SAMPLERATE * FRAMEDURATION/ 1000)
 
-model = WhisperModel("base.en", device= "cpu", compute_type= "int8")
+model = WhisperModel("small", device= "cpu", compute_type= "int8")
 
 buffer = []
 is_recording = False
@@ -50,8 +50,8 @@ def callback(indata, frames, time, status):
               offtime = 0
               
 def transcribe_audio(audio):
-    segments, _ = model.transcribe(audio, language= "en", condition_on_previous_text=False, 
-    no_speech_threshold=0.5, vad_filter=True, initial_prompt="commands: open firefox, close, search, play")
+    segments, _ = model.transcribe(audio, condition_on_previous_text=False, 
+    no_speech_threshold=0.5, vad_filter=True, initial_prompt="search")
     text = None
     
     for segment in segments:
