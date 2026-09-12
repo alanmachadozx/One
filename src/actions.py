@@ -15,8 +15,8 @@ class Actions:
         self.commands ={
             "stop music": self.pause_music,
             "start music": self.start_music,
-            "turn up the volume": self.up_volume,
-            "turn down the volume": self.down_volume,
+            "up the volume": self.up_volume,
+            "down the volume": self.down_volume,
             "next music": self.next_music,
             "update system": self.system_update
         }
