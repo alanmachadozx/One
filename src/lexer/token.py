@@ -1,4 +1,6 @@
 from enum import StrEnum
+from dataclasses import dataclass
+
 
 class TokenType(StrEnum):
     OPEN = "open"
@@ -16,3 +18,10 @@ class TokenType(StrEnum):
     UP = "up"
     DOWN = "down"
     VOLUME = "volume"
+    IDENTIFIER = "identifier"
+
+@dataclass
+class Token:
+    type: TokenType
+    lexeme: str
+    

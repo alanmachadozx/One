@@ -14,10 +14,7 @@ class Scanner:
         def advance(self):
             self.current += 1
             return self.text[self.current - 1]
-
-        def previous(self):
-            return self.text[self.current - 1]
-
+            
         def peek_next(self):
             if self.current + 1 >= len(self.text):
                 return '\0'
@@ -26,6 +23,7 @@ class Scanner:
         def scan(self):
             while not self.finished():
                 self.start = self.current
+                self.scan_single_token()
                 
         def scan_single_token(self):
             c = self.advance() 
@@ -35,9 +33,15 @@ class Scanner:
 
                 while not c.isspace():
                     buffer += c
+
+                    if self.finished():
+                        break
                     c = self.advance()
 
-                match buffer:
+                try:
+                    token_type = TokenType(buffer)
 
-                    case TokenType.OPEN:
-                        self.token.push(buffer)
+                except ValueError:
+                    token_type = TokenType.IDENTIFIER
+
+                self.tokens.append(Token(type= token_type, lexeme= buffer))
