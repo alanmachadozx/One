@@ -1,5 +1,6 @@
 from lexer.token import *
 
+#translate a string into a list of tokens
 class Scanner:
     def __init__(self, text: str):
         self.text = text
@@ -15,11 +16,6 @@ class Scanner:
             self.current += 1
             return self.text[self.current - 1]
             
-        def peek_next(self):
-            if self.current + 1 >= len(self.text):
-                return '\0'
-            return self.text[self.current + 1]
-
         def scan(self):
             while not self.finished():
                 self.start = self.current

@@ -1,7 +1,7 @@
 from enum import StrEnum
 from dataclasses import dataclass
 
-
+#the actions tokens
 class TokenType(StrEnum):
     OPEN = "open"
     CLOSE = "close"
