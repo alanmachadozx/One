@@ -1,5 +1,4 @@
-from lexer.token import Token
-from src.listener import buffer
+from src.lexer.token import Token
 
 class CommandExpr:
         pass

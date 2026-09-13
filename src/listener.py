@@ -1,12 +1,14 @@
 import sounddevice as sd
-from src.actions import *
+from src.commands.actions import *
 import numpy as np
 from faster_whisper import WhisperModel
 import webrtcvad
 import queue
 import time
+from src.lexer.scanner import *
+from src.parser.parser import *
+from src.ast.checker import ast_checker
 
-comands_execute = Actions()
 vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
 q = queue.Queue()
 
@@ -74,7 +76,14 @@ def start_listerning():
     
                 if text:
                     formatted_text = text.lower().strip().replace(".", "").replace(",", "")
-                    comands_execute.process(formatted_text)
+                    scanner = Scanner(formatted_text)
+                    scanner.scan()
+
+                    parser = Parser(scanner.tokens)
+                    ast_root = parser.parse_command()
+
+                    if ast_root:
+                        ast_checker(ast_root)
     
         except KeyboardInterrupt:
             engine.say("Program finished.")

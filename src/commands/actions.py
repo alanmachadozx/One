@@ -2,7 +2,7 @@ from cmath import e
 from http.client import responses
 import subprocess
 import webbrowser
-from src.apis import *
+from src.commands.apis import *
 import urllib.parse
 import pyttsx3
 
