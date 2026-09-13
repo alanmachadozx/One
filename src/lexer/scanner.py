@@ -1,5 +1,7 @@
+from lexer.token import *
+
 class Scanner:
-    def __init__(self, text):
+    def __init__(self, text: str):
         self.text = text
         self.current = 0
         self.start = 0
@@ -16,11 +18,6 @@ class Scanner:
         def previous(self):
             return self.text[self.current - 1]
 
-        def peek(self):
-            if self.finished():
-                return '\0'
-            return self.text[self.current]
-
         def peek_next(self):
             if self.current + 1 >= len(self.text):
                 return '\0'
@@ -30,5 +27,17 @@ class Scanner:
             while not self.finished():
                 self.start = self.current
                 
+        def scan_single_token(self):
+            c = self.advance() 
 
-                
+            if not c.isspace():
+                buffer = ""
+
+                while not c.isspace():
+                    buffer += c
+                    c = self.advance()
+
+                match buffer:
+
+                    case TokenType.OPEN:
+                        self.token.push(buffer)

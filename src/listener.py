@@ -1,5 +1,5 @@
 import sounddevice as sd
-from actions import *
+from src.actions import *
 import numpy as np
 from faster_whisper import WhisperModel
 import webrtcvad
