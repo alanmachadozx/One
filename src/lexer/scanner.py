@@ -5,8 +5,6 @@ class Scanner:
     def __init__(self, text: str):
         self.text = text
         self.current = 0
-        self.start = 0
-        self.line = 1
         self.tokens = []
 
         def finished(self):

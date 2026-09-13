@@ -1,4 +1,5 @@
 from lexer.token import Token
+from src.listener import buffer
 
 class CommandExpr:
         pass
@@ -20,15 +21,42 @@ class Parser:
 
     def peek(self) -> Token:
         return self.tokens[self.current_token]
-
+    
     def advance(self):
         self.current_token += 1
 
+    def previous(self) -> Token:
+        return self.tokens[self.current_token - 1]
+        
+    #Is similar to match, but does not advance the token if it does not match
+    def check(self, token_type: str) -> bool:
+        if self.current_token >= len(self.tokens):
+            return False
+        return self.peek().type == token_type
+
     # if the current token matches the given type, advance and return True, otherwise return False
-    def match(self, token_type: str):
-        if self.peek().type == token_type:
+    def match(self, token_type: str) -> bool:
+        if self.check(token_type):
             self.advance()
             return True
         return False
 
-    
+    def parse(self):
+        buffer = []
+
+        while self.current_token < len(self.tokens) and not self.check("and"):
+            buffer.append(self.peek().lexeme)
+            self.advance()
+
+        return buffer
+
+    def parse_command(self) -> CommandExpr:
+        left = SingleAction(" ".join(self.parse()))
+
+        if self.match("and"):
+            operator = self.previous().lexeme
+            right = self.parse_command()
+            
+            return SequenceAction(left, operator, right)
+            
+        return left
