@@ -12,6 +12,7 @@ The system operates using the **Producer-Consumer** pattern, ensuring the applic
 * **Safe Buffer (Queue):** The consolidated audio is packaged and sent to a `queue.Queue()`, ensuring secure transfer from the capture thread to the main thread.
 * **Consumer (Transcription):** The main loop consumes packets from the queue and triggers the Faster Whisper model (CPU-optimized with `compute_type="int8"`) to generate clean text.
 * **Action Executor:** The formatted text is passed to the `Actions` class, which interprets and executes the corresponding system command.
+* **Context analyzer:** A lexer and parser that receives the command before execution and checks for a connective, for example, in `"open firefox and open kitty,"` it detects the connective and interprets it as two separate commands.
 
 ## What works today?
 
@@ -19,15 +20,15 @@ The system operates using the **Producer-Consumer** pattern, ensuring the applic
 * Commands to open Firefox and Kitty (if yours are different, you can specify the browser and terminal you use simply by changing the names in the respective functions).
 * Player control commands, such as: increase volume, decrease volume, pause music, start music, and next track.
 * The ability to update the system via voice commands is configured for Arch-based Linux distributions, but you can also modify it to suit your specific distribution.
+* You can ask Gemini anything by saying "Gemini" followed by your question. You need to create an API key in Google AI Studio.
 
 ## Possible future implementations
 
 * Search for videos on YouTube.
-* Search for something on an AI (like Gemini).
-* The assistant responds to commands, something like: "OK! Opening Firefox".
+* An algorithm where you pass a few arguments in the way you usually speak.
 * An interface.
 * The ability to execute commands on another computer of yours. For example, you leave One running on one PC, and when you issue a command, it sends it to your other PC.
-
+  
 ##  Installation and Configuration
 
 ### Prerequisites
