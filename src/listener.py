@@ -24,7 +24,7 @@ offtime = 0
 
 #the callback function, called by the inputStream
 def callback(indata, frames, time, status):
-    global buffer, is_recording, offtime
+    global is_recording, offtime
     
     if status:
         print(status)
