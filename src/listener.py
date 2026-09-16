@@ -57,7 +57,8 @@ def transcribe_audio(audio):
     text = None
     
     for segment in segments:
-        print(f"{segment.text.strip().replace(".", "").replace(",", "").lower()}")
+        clean_text = segment.text.strip().replace(".", "").replace(",", "").lower()
+        print(clean_text)
         text = segment.text.strip()
 
     return text
