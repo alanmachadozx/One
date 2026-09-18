@@ -11,5 +11,4 @@ def ast_checker(node: CommandExpr):
         ast_checker(node.right)
 
     if isinstance(node, SingleAction) and node.action:
-        true_command = node.action + " " + node.target
-        command_execute.process(true_command)
+        command_execute.process(node.action, node.target)

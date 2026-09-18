@@ -12,12 +12,12 @@ class TokenType(StrEnum):
     SEARCH = "search"
     FOR = "for"
     GEMINI = "gemini"
-    STOP = "stop"
-    START = "start"
+    STOP = "stop music"
+    START = "start music"
+    NEXT = "next music"
     UPDATE = "update"
-    UP = "up"
-    DOWN = "down"
-    VOLUME = "volume"
+    UP = "up volume"
+    DOWN = "down volume"
     IDENTIFIER = "identifier"
 
 @dataclass
