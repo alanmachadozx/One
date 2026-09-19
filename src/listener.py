@@ -67,6 +67,8 @@ def transcribe_audio(audio):
 def start_listerning():
     speech("Welcome to One. How can I help you?")
     time.sleep(1)
+
+    is_sleeping = False
     
     with sd.InputStream(samplerate= SAMPLERATE, channels= 1, dtype = "float32", callback= callback, blocksize= FRAME_SIZE):
 
@@ -77,6 +79,20 @@ def start_listerning():
     
                 if text:
                     formatted_text = text.lower().strip().replace(".", "").replace(",", "")
+
+                    if formatted_text == "sleep":
+                        is_sleeping = True
+                        speech("One is sleeping.")
+                        continue
+
+                    if formatted_text == "wake":
+                        is_sleeping = False
+                        speech("One is awake.")
+                        continue
+
+                    if is_sleeping == True:
+                        continue
+                        
                     scanner = Scanner(formatted_text)
                     scanner.scan()
 
