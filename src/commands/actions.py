@@ -1,119 +1,84 @@
-from cmath import e
-from http.client import responses
 import subprocess
 import webbrowser
 from src.commands.apis import *
 import urllib.parse
-import pyttsx3
-
-#for the response voice
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)
+from src.commands.speech import speech
 
 class Actions:
-    def __init__(self):
-        self.commands ={
-            "stop music": self.pause_music,
-            "start music": self.start_music,
-            "up the volume": self.up_volume,
-            "down the volume": self.down_volume,
-            "next music": self.next_music,
-            "update system": self.system_update
-        }
         
-        
-    def process(self, text):
-        self.open_program(text)
-        self.close_program(text)
-        self.play_music(text)
-        self.web_search(text)
-        self.gemini_search(text)
-        if text in self.commands:
-            action = self.commands[text]
-            action()
+    def process(self, action:str, target:str):
 
-    def gemini_search(self, text:str):
-        if "gemini" in text:
-            engine.say("Thinking")
-            engine.runAndWait()
-            
-            content = text.replace("gemini", "").strip()
-            responses = ask_gemini(content)
-            print(responses)
-            
-    def web_search(self, text:str):
-        if "search for" in text:
-            content = text.replace("search for", "").strip()
-            formatted_content = urllib.parse.quote(content)
+        if action == "open":
+            try:
+                
+               subprocess.Popen([target])
+            except Exception:
+                print(f"{target} not found!")
+                speech(f"{target} not found.")
+            else:
+                speech(f"Opened {target}.")
+
+        if action == "close":
+            try:
+                subprocess.Popen(["kill", target])
+                
+            except Exception:
+                print(f"{target} not found!")
+                speech(f"{target} not found!")
+            else:
+                speech(f"Closed {target}.")
+
+        if action == "gemini":
+            speech("Thinking")
+
+            response = ask_gemini(target)
+            print(response)
+        
+        if action == "search":
+            formatted_content = urllib.parse.quote(target)
             url = f"https://www.google.com/search?q={formatted_content}"
-
-            engine.say(f"Searching for {content}.")
-            engine.runAndWait()
+            
+            speech(f"Searching for {target}.")
             webbrowser.open(url)
 
-    #captures the "play music-name" command and searches for the specific song on Spotify
-    # You need Spotify for Developers and spotify-launcher.
-    def play_music(self, text:str):
-        if "play" in text:
+        if action == "play":
             subprocess.Popen(["spotify-launcher"])
-            music_name = text.replace("play", "", 1).strip()
+
+            #Captures the "play music-name" command and searches for the specific song on Spotify
+            #You need Spotify for Developers and spotify-launcher.
             try:
-                if music_name:
-                    result = sp.search(q= music_name, limit= 1, type="track")
+                if target:
+                    result = sp.search(q=target, limit= 1, type="track")
     
                     if result:
                         tracks = result.get("tracks", {}).get("items", [])
         
                         if tracks:
                             music_uri = tracks[0]["uri"] #select the first track and your uri
-                            sp.start_playback(uris =[music_uri])
-                            engine.say(f"Playing {music_name}.")
-                            engine.runAndWait()
-        
+                            sp.start_playback(uris = [music_uri])
+                            speech(f"Playing {target}.")
+
                         else:
                             print("Music not found!")
             except Exception:
                 print("Failed to communicate with Spotify")
 
-    def open_program(self, text:str):
-        if "open" in text:
-            program = text.replace("open", "").strip()
-
-            try:
-               subprocess.Popen([program])
-            except Exception:
-                print(f"Failed to open {program}")
-                engine.say(f"Failed to open {program}.")
-                engine.runAndWait()
-            else:
-                engine.say(f"Opened {program}.")
-                engine.runAndWait()
-
-    def close_program(self, text: str):
-        if "close" in text:
-            program = text.replace("close", "").strip()
-            subprocess.Popen(["kill", program])
+        if action == "update":
+            subprocess.Popen(["sudo", "pacman", "-Syu"])
             
-            engine.say(f"Closed {program}.")
-            engine.runAndWait()
+            speech("Update completed.")
+        
+        if action == "next music":
+            subprocess.Popen(["playerctl", "next"])
 
-    def system_update(self):
-        subprocess.Popen(["sudo", "pacman", "-Syu"])
-        engine.say("Update completed.")
-        engine.runAndWait()
-        
-        
-    def next_music(self):
-        subprocess.Popen(["playerctl", "next"])
-        
-    def up_volume(self):
-        subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
-        
-    def down_volume(self):
-        subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
+        if action == "up volume":
+            subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
 
-    def start_music(self):
-        subprocess.Popen(["playerctl", "play"])
-        
-    def pause_music(self):
-        subprocess.Popen(["playerctl", "play-pause"])
+        if action == "down volume":
+            subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
+
+        if action == "stop music":
+            subprocess.Popen(["playerctl", "stop"])
+
+        if action == "start music":
+            subprocess.Popen(["playerctl", "play"])
