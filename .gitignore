@@ -6,3 +6,6 @@ venv/
 .cache*
 env/
 *.pyc
+history.db
+*.db
+src/database/history.db
