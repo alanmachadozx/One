@@ -7,7 +7,10 @@ def create_table():
     res = cursor.execute("CREATE TABLE history(id INTEGER PRIMARY KEY AUTOINCREMENT, action TEXT, target TEXT)")
     db_file.commit()
 
-    res = cursor.execute("SELECT name FROM sqlite_master")
-    print(res.fetchall())
+    return res
 
-create_table()
+def insert(action:str, target: str):
+    res = cursor.execute("INSERT INTO history(action, target) VALUES(?, ?)", (action, target))
+    db_file.commit()
+
+    return res
