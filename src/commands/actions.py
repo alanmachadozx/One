@@ -1,49 +1,35 @@
-from cmath import e
-from http.client import responses
 import subprocess
 import webbrowser
 from src.commands.apis import *
 import urllib.parse
-import pyttsx3
-
-#for the response voice
-engine = pyttsx3.init()
-engine.setProperty('rate', 150)
+from src.commands.speech import speech
 
 class Actions:
-    def __init__(self):
-       self.common_targets = [
-           
-       ]
         
     def process(self, action:str, target:str):
 
         if action == "open":
             try:
+                
                subprocess.Popen([target])
             except Exception:
                 print(f"{target} not found!")
-                engine.say(f"{target} not found.")
-                engine.runAndWait()
+                speech(f"{target} not found.")
             else:
-                engine.say(f"Opened {target}.")
-                engine.runAndWait()
-                
+                speech(f"Opened {target}.")
+
         if action == "close":
             try:
                 subprocess.Popen(["kill", target])
                 
             except Exception:
                 print(f"{target} not found!")
-                engine.say(f"{target} not found!")
-                engine.runAndWait()
+                speech(f"{target} not found!")
             else:
-                engine.say(f"Closed {target}.")
-                engine.runAndWait()
+                speech(f"Closed {target}.")
 
         if action == "gemini":
-            engine.say("Thinking")
-            engine.runAndWait()
+            speech("Thinking")
 
             response = ask_gemini(target)
             print(response)
@@ -52,8 +38,7 @@ class Actions:
             formatted_content = urllib.parse.quote(target)
             url = f"https://www.google.com/search?q={formatted_content}"
             
-            engine.say(f"Searching for {target}.")
-            engine.runAndWait()
+            speech(f"Searching for {target}.")
             webbrowser.open(url)
 
         if action == "play":
@@ -71,9 +56,8 @@ class Actions:
                         if tracks:
                             music_uri = tracks[0]["uri"] #select the first track and your uri
                             sp.start_playback(uris = [music_uri])
-                            engine.say(f"Playing {target}.")
-                            engine.runAndWait()
-        
+                            speech(f"Playing {target}.")
+
                         else:
                             print("Music not found!")
             except Exception:
@@ -82,8 +66,7 @@ class Actions:
         if action == "update":
             subprocess.Popen(["sudo", "pacman", "-Syu"])
             
-            engine.say("Update completed.")
-            engine.runAndWait()
+            speech("Update completed.")
         
         if action == "next music":
             subprocess.Popen(["playerctl", "next"])

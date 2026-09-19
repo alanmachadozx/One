@@ -8,6 +8,7 @@ import time
 from src.lexer.scanner import *
 from src.parser.parser import *
 from src.ast.checker import ast_checker
+from src.commands.speech import *
 
 vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
 q = queue.Queue()
@@ -64,9 +65,8 @@ def transcribe_audio(audio):
     return text
 
 def start_listerning():
-    engine.say("Hello! One has started.")
-    engine.runAndWait()
-    time.sleep(2)
+    speech("Welcome to One. How can I help you?")
+    time.sleep(1)
     
     with sd.InputStream(samplerate= SAMPLERATE, channels= 1, dtype = "float32", callback= callback, blocksize= FRAME_SIZE):
 
@@ -87,5 +87,4 @@ def start_listerning():
                         ast_checker(ast_root)
     
         except KeyboardInterrupt:
-            engine.say("Program finished.")
-            engine.runAndWait()
+            speech("Program finished.")
