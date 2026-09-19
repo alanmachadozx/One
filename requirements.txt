@@ -1,4 +1,4 @@
-pyttsx3
+gtts
 webrtcvad
 sounddevice
 numpy
