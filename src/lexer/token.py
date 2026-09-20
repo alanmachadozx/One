@@ -12,13 +12,16 @@ class TokenType(StrEnum):
     SEARCH = "search"
     FOR = "for"
     GEMINI = "gemini"
-    STOP = "stop music"
-    START = "start music"
-    NEXT = "next music"
+    STOP = "stop"
+    START = "start"
+    NEXT = "next"
     UPDATE = "update"
-    UP = "up volume"
-    DOWN = "down volume"
+    UP = "up"
+    DOWN = "down"
+    VIEW = "view"
+    CREATE = "create"
     IDENTIFIER = "identifier"
+    TASK = "task"
 
 @dataclass
 class Token:
