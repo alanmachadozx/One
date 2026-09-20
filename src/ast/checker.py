@@ -1,6 +1,6 @@
 from src.parser.parser import *
 from src.commands.actions import *
-from src.database.db import *
+from database.db import *
 
 command_execute = Actions()
 
@@ -13,4 +13,4 @@ def ast_checker(node: CommandExpr):
 
     if isinstance(node, SingleAction) and node.action:
         command_execute.process(node.action, node.target)
-        insert(node.action, node.target)
+        _ = insert(node.action, node.target)

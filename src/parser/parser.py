@@ -1,3 +1,5 @@
+from numpy.core.numeric import nextafter
+
 from src.lexer.token import Token, TokenType
 
 class CommandExpr:
@@ -28,6 +30,9 @@ class Parser:
     def advance(self):
         self.current_token += 1
 
+    def peek_next(self) -> Token:
+        return self.tokens[self.current_token + 1]
+
     def previous(self) -> Token:
         return self.tokens[self.current_token - 1]
         
@@ -49,6 +54,11 @@ class Parser:
             return False
         return self.peek().type in self.actions
 
+    def next_is_action(self):
+        if self.current_token + 1 >= len(self.tokens):
+            return False
+        return self.peek_next().type in self.actions
+
     def parse(self):
         buffer = []
 
@@ -68,6 +78,11 @@ class Parser:
             target = " ".join(self.parse())
         else:
             target = " ".join(self.parse())
+
+        if self.check("and") and not self.next_is_action():
+            target = target + " " + " ".join(self.peek().lexeme)
+            self.advance()
+            target = target + " " + " ".join(self.parse())
             
         left = SingleAction(action, target)
 

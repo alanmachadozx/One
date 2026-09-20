@@ -1,6 +1,6 @@
 import sqlite3
 
-db_file = sqlite3.connect("src/database/history.db")
+db_file = sqlite3.connect("database/history.db")
 cursor = db_file.cursor()
 
 def create_table():
@@ -13,4 +13,3 @@ def insert(action:str, target: str):
     res = cursor.execute("INSERT INTO history(action, target) VALUES(?, ?)", (action, target))
     db_file.commit()
 
-    return res
