@@ -19,7 +19,9 @@ class TokenType(StrEnum):
     UP = "up"
     DOWN = "down"
     VIEW = "view"
+    CREATE = "create"
     IDENTIFIER = "identifier"
+    TASK = "task"
 
 @dataclass
 class Token:

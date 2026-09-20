@@ -73,9 +73,16 @@ class Parser:
         target = " "
         
         if self.is_action():
-            action = self.peek().lexeme #splits the structure into {"action", "target"}
+            #splits the structure into {"action", "target"},
+            #transforms two action tokens into a single action if it is a compound command, like "create task"
+            if self.next_is_action():
+                action = self.peek().lexeme + " " + self.peek_next().lexeme 
+            else:
+                action = self.peek().lexeme
+                
             self.advance()
             target = " ".join(self.parse())
+            
         else:
             target = " ".join(self.parse())
 

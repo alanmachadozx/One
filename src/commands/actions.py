@@ -10,13 +10,13 @@ class Actions:
     def process(self, action:str, target:str):
         if action == "view" and target == "history":
             db_query()
-            _ = insert(action, target)
+            _ = history_insert(action, target)
             
         if action == "open":
             
             try:      
                subprocess.Popen([target])
-               _ = insert(action, target)
+               _ = history_insert(action, target)
                
             except Exception:
                 print(f"{target} not found!")
@@ -28,7 +28,7 @@ class Actions:
         if action == "close":
             try:
                 subprocess.Popen(["kill", target])
-                _ = insert(action, target)
+                _ = history_insert(action, target)
                 
             except Exception:
                 print(f"{target} not found!")
@@ -41,7 +41,7 @@ class Actions:
 
             response = ask_gemini(target)
             print(response)
-            _ = insert(action, target)
+            _ = history_insert(action, target)
         
         if action == "search":
             formatted_content = urllib.parse.quote(target)
@@ -49,7 +49,7 @@ class Actions:
             
             speech(f"Searching for {target}.")
             webbrowser.open(url)
-            _ = insert(action, target)
+            _ = history_insert(action, target)
 
         if action == "play":
             subprocess.Popen(["spotify-launcher"])
@@ -67,7 +67,7 @@ class Actions:
                             music_uri = tracks[0]["uri"] #select the first track and your uri
                             sp.start_playback(uris = [music_uri])
                             speech(f"Playing {target}.")
-                            _ = insert(action, target)
+                            _ = history_insert(action, target)
 
                         else:
                             print("Music not found!")
@@ -76,25 +76,25 @@ class Actions:
 
         if action == "update":
             subprocess.Popen(["sudo", "pacman", "-Syu"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
             speech("Update started.")
         
         if action == "next" and target == "music":
             subprocess.Popen(["playerctl", "next"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
 
         if action == "up" and target == "volume":
             subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
 
         if action == "down" and target == "volume":
             subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
 
         if action == "stop" and target == "music":
             subprocess.Popen(["playerctl", "stop"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
 
         if action == "start" and target == "music":
             subprocess.Popen(["playerctl", "play"])
-            _ = insert(action, target)
+            _ = history_insert(action, target)
