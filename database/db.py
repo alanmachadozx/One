@@ -13,3 +13,6 @@ def insert(action:str, target: str):
     res = cursor.execute("INSERT INTO history(action, target) VALUES(?, ?)", (action, target))
     db_file.commit()
 
+def db_query():
+    for row in cursor.execute("SELECT * FROM history"):
+        print(row)
