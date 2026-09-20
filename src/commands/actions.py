@@ -9,6 +9,11 @@ from database.db import *
 class Actions:
         
     def process(self, action:str, target:str):
+
+        if action == "view task":
+            view_tasks()
+            _ = history_insert(action, target)
+            
         if action == "create task":
             time_remaining = ask_user(" Enter the time remaining")
             if time_remaining == "skip":
@@ -20,7 +25,7 @@ class Actions:
                 
             create_task(target, time_remaining, description)
             speech(f"Task {target} created.")
-            
+            _ = history_insert(action, target)
             
         if action == "view" and target == "history":
             db_query()
