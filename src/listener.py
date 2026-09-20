@@ -1,23 +1,23 @@
 import sounddevice as sd
 from src.commands.actions import *
 import numpy as np
-from faster_whisper import WhisperModel
+
 import webrtcvad
-import queue
+
 import time
 from src.lexer.scanner import *
 from src.parser.parser import *
 from src.ast.checker import ast_checker
 from src.commands.speech import *
+from src.commands.speech import *
 
 vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
-q = queue.Queue()
 
 SAMPLERATE = 16000
 FRAMEDURATION = 30 #ms
 FRAME_SIZE = int(SAMPLERATE * FRAMEDURATION/ 1000)
 
-model = WhisperModel("small", device= "cpu", compute_type= "int8")
+
 
 buffer = []
 is_recording = False
@@ -52,17 +52,6 @@ def callback(indata, frames, time, status):
               is_recording = False
               offtime = 0
               
-def transcribe_audio(audio):
-    segments, _ = model.transcribe(audio, condition_on_previous_text=False, 
-    no_speech_threshold=0.5, vad_filter=True, initial_prompt="search")
-    text = None
-    
-    for segment in segments:
-        clean_text = segment.text.strip().replace(".", "").replace(",", "").lower()
-        print(clean_text)
-        text = segment.text.strip()
-
-    return text
 
 def start_listerning():
     speech("Welcome to One. How can I help you?")

@@ -2,12 +2,26 @@ import subprocess
 import webbrowser
 from src.commands.apis import *
 import urllib.parse
-from src.commands.speech import speech
+from src.commands.speech import *
 from database.db import * 
+
 
 class Actions:
         
     def process(self, action:str, target:str):
+        if action == "create task":
+            time_remaining = ask_user(" Enter the time remaining")
+            if time_remaining == "skip":
+                time_remaining = None
+                
+            description = ask_user(" Enter the description")
+            if description == "skip":
+                description = None
+                
+            create_task(target, time_remaining, description)
+            speech(f"Task {target} created.")
+            
+            
         if action == "view" and target == "history":
             db_query()
             _ = history_insert(action, target)
