@@ -12,6 +12,7 @@ class Actions:
 
         if action == "view task":
             view_tasks()
+            speech("Here are your tasks.")
             _ = history_insert(action, target)
             
         if action == "create task":
@@ -29,6 +30,7 @@ class Actions:
             
         if action == "view" and target == "history":
             db_query()
+            speech("Here is your history.")
             _ = history_insert(action, target)
             
         if action == "open":
