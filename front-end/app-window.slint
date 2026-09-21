@@ -1,0 +1,90 @@
+export component MainWindow inherits Window {
+    width: 1280px;
+    height: 720px;
+    background:  #03080D;
+
+    //main gradient
+    Rectangle{
+        width: 100%;
+        height: 100%;
+
+        background: @linear-gradient(
+            135deg,
+            #261219 0%,
+            #03080d 42%,
+            #03080d 100%
+        );
+    }
+    //glare on the left side
+    Rectangle {
+        x: -200px;
+        y: parent.height - 500px;
+        width: 700px;
+        height: 700px;
+        border-radius: 350px;
+
+        background: @radial-gradient(circle, 
+            #733d4759 0%,
+            #733d4726 34%,
+            #733d4700 72%,
+        );
+    }
+
+    //glare on the right side
+    Rectangle {
+        x: parent.width - 420px;
+        y: -240px;
+        width: 650px;
+        height: 650px;
+        border-radius: 325px;
+
+        background: @radial-gradient(circle, 
+            #a6414138 0%,
+            #a641411c 38%,
+            #a6414100 72%
+        );
+    }
+
+    //central cyan lighting
+    Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 680px;
+        height: 680px;
+        border-radius: 340px;
+
+        background: @radial-gradient(circle, 
+            #71d9d926 0%,
+            #71d9d912 34%,
+            #71d9d900 70%
+        );
+    }
+
+    //vertical grid
+    for column[index] in 24: Rectangle{
+        x: index * 56px; 
+        width: 1px;
+        height: 100%;
+        background: #71d9d914;
+    }
+
+    //horizontal grid 
+    for row[index] in 14: Rectangle{
+        y: index * 56px;
+        width: 100%;
+        height: 1px;
+        background: #71d9d914;
+    }
+
+    //vigbette to darken the edges
+    Rectangle {
+        width: 100%;
+        height: 100%;
+
+        background: @radial-gradient(circle, 
+            #03080d00 32%,
+            #03080d66 72%,
+            #03080dcc 100%
+        );
+    }
+}
