@@ -3,96 +3,110 @@ export component VoiceOrb inherits Rectangle {
     height: 360px;
     background: transparent;
 
-    in-out property <bool> active: false;
+    in-out property <bool> active: true;
 
-    property <int> phase: 0;
-    property <bool> pulse: false;
-
-    Timer {
-        interval: 90ms;
-        running: root.active;
-
-        triggered => {
-            root.phase = root.phase + 3;
-            root.pulse = !root.pulse;
-
-            if root.phase >= 360 {
-                root.phase = 0;
-            }
-        }
-    }
-
-    // Halo
+    // External wine halo
     Rectangle {
-        x: 25px;
-        y: 25px;
-        width: 310px;
-        height: 310px;
-        border-radius: 155px;
+        x: 14px;
+        y: 14px;
+        width: 332px;
+        height: 332px;
+        border-radius: 166px;
 
         background: @radial-gradient(
             circle,
-            #71d9d938 0%,
-            #a641412d 38%,
-            #733d471c 56%,
-            #733d4700 74%
+            #733d473d 0%,
+            #a6414129 31%,
+            #2612191f 57%,
+            #03080d00 75%
         );
 
-        opacity: root.active ? 1 : 0.65;
-
-        animate opacity {
-            duration: 30ms;
-        }
+        opacity: root.active
+            ? 0.78 + 0.22 * abs(
+                sin(animation-tick() / 7ms * 1deg)
+            )
+            : 0.5;
     }
 
-    // Central orbit
-    Rectangle {
-        x: 20px;
-        y: 20px;
-        width: 320px;
-        height: 320px;
-        border-radius: 160px;
-        border-width: 1px;
-        border-color: #a641415e;
-        background: transparent;
-
-        transform-rotation: root.phase * 1deg;
-
-        Rectangle {
-            x: -2px;
-            y: parent.height / 2 - 3px;
-            width: 6px;
-            height: 6px;
-            border-radius: 3px;
-            background: #a64141;
-        }
-
-    }
-
-    // inner orbit
+    // Intermediate cyan halo
     Rectangle {
         x: 48px;
         y: 48px;
         width: 264px;
         height: 264px;
         border-radius: 132px;
+
+        background: @radial-gradient(
+            circle,
+            #71d9d92e 0%,
+            #71d9d917 43%,
+            #71d9d900 73%
+        );
+
+        opacity: root.active
+            ? 0.7 + 0.3 * abs(
+                sin(animation-tick() / 11ms * 1deg)
+            )
+            : 0.45;
+    }
+
+    // Outer orbit
+    Rectangle {
+        x: 17px;
+        y: 17px;
+        width: 326px;
+        height: 326px;
+        border-radius: 163px;
         border-width: 1px;
-        border-color: #71d9d94d;
+        border-color: #a6414147;
         background: transparent;
 
-        transform-rotation: root.phase * -1deg;
+        transform-rotation:
+            animation-tick() / 30ms * 1deg;
 
+        // Red particle
         Rectangle {
-            x: parent.width - 4px;
+            x: -3px;
+            y: parent.height / 2 - 3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: #a64141;
+
+            drop-shadow-color: #a64141a8;
+            drop-shadow-blur: 9px;
+        }
+    }
+
+    // Secondary orbit
+    Rectangle {
+        x: 40px;
+        y: 40px;
+        width: 280px;
+        height: 280px;
+        border-radius: 140px;
+        border-width: 1px;
+        border-color: #71d9d936;
+        background: transparent;
+
+        transform-rotation:
+            animation-tick() / -22ms * 1deg;
+
+        // Cyan particle
+        Rectangle {
+            x: parent.width - 3px;
             y: parent.height / 2 - 2px;
             width: 5px;
             height: 5px;
             border-radius: 3px;
             background: #71d9d9;
+
+            drop-shadow-color: #71d9d9a6;
+            drop-shadow-blur: 10px;
         }
     }
 
-    // Radial bars
+    // 56 radial bars
     for bar[index] in 56: Rectangle {
         width: root.width;
         height: root.height;
@@ -102,100 +116,147 @@ export component VoiceOrb inherits Rectangle {
 
         Rectangle {
             x: parent.width / 2 - 1px;
-            y: 21px;
+            y: 18px;
             width: 2px;
-
-            height: root.active
-                ? root.pulse ? 23px : 11px
-                : 9px;
-
             border-radius: 1px;
 
-            background: index < 18
-                ? #71d9d9
-                : index < 37
-                    ? #a64141
-                    : #733d47;
+            // Each bar has a different phase
+            height: root.active
+                ? 7px + 21px * abs(
+                    sin(
+                        (
+                            animation-tick() / 8ms
+                            + index * 23
+                        ) * 1deg
+                    )
+                )
+                : 7px + 7px * abs(
+                    sin(index * 31deg)
+                );
 
-            opacity: root.active ? 0.95 : 0.4;
+            background: index.mod(4) == 0
+                ? #a64141
+                : index.mod(4) == 2
+                    ? #733d47
+                    : #71d9d9;
 
-            animate height {
-                duration: 90ms;
-                easing: ease-in-out;
-            }
+            opacity: root.active
+                ? 0.5 + 0.5 * abs(
+                    sin(
+                        (
+                            animation-tick() / 10ms
+                            + index * 19
+                        ) * 1deg
+                    )
+                )
+                : 0.35;
         }
     }
 
-    // central circle
+    // Main shell
     Rectangle {
-        x: 78px;
-        y: 78px;
-        width: 204px;
-        height: 204px;
-        border-radius: 102px;
+        x: 79px;
+        y: 79px;
+        width: 202px;
+        height: 202px;
+        border-radius: 101px;
         border-width: 1px;
-        border-color: #71d9d966;
+        border-color: #71d9d95c;
 
-        background: @radial-gradient(
-            circle,
-            #71d9d938 0%,
-            #733d47e8 30%,
-            #261219f5 65%,
-            #03080d 100%
-        );
-
+        // First inner ring
         Rectangle {
-            x: 69px;
-            y: 69px;
+            x: 9px;
+            y: 9px;
+            width: 184px;
+            height: 184px;
+            border-radius: 92px;
+            border-width: 1px;
+            border-color: #a6414142;
+            background: transparent;
+        }
+
+        // Second inner ring
+        Rectangle {
+            x: 28px;
+            y: 28px;
+            width: 146px;
+            height: 146px;
+            border-radius: 73px;
+            border-width: 1px;
+            border-color: #71d9d92e;
+            background: transparent;
+        }
+
+        // Interior lighting
+        Rectangle {
+            x: 51px;
+            y: 51px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+
+
+            opacity: root.active
+                ? 0.65 + 0.35 * abs(
+                    sin(animation-tick() / 9ms * 1deg)
+                )
+                : 0.4;
+        }
+
+        // Central core
+        Rectangle {
+            x: 68px;
+            y: 68px;
             width: 66px;
             height: 66px;
             border-radius: 33px;
             border-width: 1px;
-            border-color: #71d9d9b3;
+            border-color: #71d9d9a6;           
 
-            background: @linear-gradient(
-                145deg,
-                #733d47 0%,
-                #261219 100%
-            );
+            drop-shadow-color: #71d9d971;
+            drop-shadow-blur: root.active ? 18px : 10px;
 
+            // Forma de onda central
             HorizontalLayout {
-                x: 17px;
-                y: 19px;
-                width: 32px;
-                height: 28px;
+                x: 15px;
+                y: 17px;
+                width: 36px;
+                height: 32px;
                 spacing: 4px;
                 alignment: center;
 
                 for wave[index] in 5: Rectangle {
                     width: 3px;
-
-                    height: !root.active
-                        ? 5px
-                        : index == 2
-                            ? root.pulse ? 27px : 12px
-                            : index == 1 || index == 3
-                                ? root.pulse ? 20px : 8px
-                                : root.pulse ? 13px : 6px;
-
                     border-radius: 2px;
+
+                    height: root.active
+                        ? 7px + 22px * abs(
+                            sin(
+                                (
+                                    animation-tick() / 6ms
+                                    + index * 47
+                                ) * 1deg
+                            )
+                        )
+                        : index == 2
+                            ? 13px
+                            : index == 1 || index == 3
+                                ? 9px
+                                : 5px;
 
                     background: index == 2
                         ? #a64141
                         : #71d9d9;
-
-                    animate height {
-                        duration: 90ms;
-                        easing: ease-in-out;
-                    }
                 }
             }
         }
     }
 
+    // Interação para ligar ou desligar a animação
     TouchArea {
         clicked => {
             root.active = !root.active;
         }
     }
 }
+
