@@ -1,0 +1,201 @@
+export component VoiceOrb inherits Rectangle {
+    width: 360px;
+    height: 360px;
+    background: transparent;
+
+    in-out property <bool> active: false;
+
+    property <int> phase: 0;
+    property <bool> pulse: false;
+
+    Timer {
+        interval: 90ms;
+        running: root.active;
+
+        triggered => {
+            root.phase = root.phase + 3;
+            root.pulse = !root.pulse;
+
+            if root.phase >= 360 {
+                root.phase = 0;
+            }
+        }
+    }
+
+    // Halo
+    Rectangle {
+        x: 25px;
+        y: 25px;
+        width: 310px;
+        height: 310px;
+        border-radius: 155px;
+
+        background: @radial-gradient(
+            circle,
+            #71d9d938 0%,
+            #a641412d 38%,
+            #733d471c 56%,
+            #733d4700 74%
+        );
+
+        opacity: root.active ? 1 : 0.65;
+
+        animate opacity {
+            duration: 30ms;
+        }
+    }
+
+    // Central orbit
+    Rectangle {
+        x: 20px;
+        y: 20px;
+        width: 320px;
+        height: 320px;
+        border-radius: 160px;
+        border-width: 1px;
+        border-color: #a641415e;
+        background: transparent;
+
+        transform-rotation: root.phase * 1deg;
+
+        Rectangle {
+            x: -2px;
+            y: parent.height / 2 - 3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: #a64141;
+        }
+
+    }
+
+    // inner orbit
+    Rectangle {
+        x: 48px;
+        y: 48px;
+        width: 264px;
+        height: 264px;
+        border-radius: 132px;
+        border-width: 1px;
+        border-color: #71d9d94d;
+        background: transparent;
+
+        transform-rotation: root.phase * -1deg;
+
+        Rectangle {
+            x: parent.width - 4px;
+            y: parent.height / 2 - 2px;
+            width: 5px;
+            height: 5px;
+            border-radius: 3px;
+            background: #71d9d9;
+        }
+    }
+
+    // Radial bars
+    for bar[index] in 56: Rectangle {
+        width: root.width;
+        height: root.height;
+        background: transparent;
+
+        transform-rotation: index * 6.428deg;
+
+        Rectangle {
+            x: parent.width / 2 - 1px;
+            y: 21px;
+            width: 2px;
+
+            height: root.active
+                ? root.pulse ? 23px : 11px
+                : 9px;
+
+            border-radius: 1px;
+
+            background: index < 18
+                ? #71d9d9
+                : index < 37
+                    ? #a64141
+                    : #733d47;
+
+            opacity: root.active ? 0.95 : 0.4;
+
+            animate height {
+                duration: 90ms;
+                easing: ease-in-out;
+            }
+        }
+    }
+
+    // central circle
+    Rectangle {
+        x: 78px;
+        y: 78px;
+        width: 204px;
+        height: 204px;
+        border-radius: 102px;
+        border-width: 1px;
+        border-color: #71d9d966;
+
+        background: @radial-gradient(
+            circle,
+            #71d9d938 0%,
+            #733d47e8 30%,
+            #261219f5 65%,
+            #03080d 100%
+        );
+
+        Rectangle {
+            x: 69px;
+            y: 69px;
+            width: 66px;
+            height: 66px;
+            border-radius: 33px;
+            border-width: 1px;
+            border-color: #71d9d9b3;
+
+            background: @linear-gradient(
+                145deg,
+                #733d47 0%,
+                #261219 100%
+            );
+
+            HorizontalLayout {
+                x: 17px;
+                y: 19px;
+                width: 32px;
+                height: 28px;
+                spacing: 4px;
+                alignment: center;
+
+                for wave[index] in 5: Rectangle {
+                    width: 3px;
+
+                    height: !root.active
+                        ? 5px
+                        : index == 2
+                            ? root.pulse ? 27px : 12px
+                            : index == 1 || index == 3
+                                ? root.pulse ? 20px : 8px
+                                : root.pulse ? 13px : 6px;
+
+                    border-radius: 2px;
+
+                    background: index == 2
+                        ? #a64141
+                        : #71d9d9;
+
+                    animate height {
+                        duration: 90ms;
+                        easing: ease-in-out;
+                    }
+                }
+            }
+        }
+    }
+
+    TouchArea {
+        clicked => {
+            root.active = !root.active;
+        }
+    }
+}

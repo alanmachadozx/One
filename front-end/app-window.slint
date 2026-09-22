@@ -1,7 +1,9 @@
+import { VoiceOrb } from "voice-orb.slint"; 
+
 export component MainWindow inherits Window {
     width: 1280px;
     height: 720px;
-    background:  #03080D;
+    background: #03080d;
 
     //main gradient
     Rectangle{
@@ -60,21 +62,6 @@ export component MainWindow inherits Window {
         );
     }
 
-    //vertical grid
-    for column[index] in 24: Rectangle{
-        x: index * 56px; 
-        width: 1px;
-        height: 100%;
-        background: #71d9d914;
-    }
-
-    //horizontal grid 
-    for row[index] in 14: Rectangle{
-        y: index * 56px;
-        width: 100%;
-        height: 1px;
-        background: #71d9d914;
-    }
 
     //vigbette to darken the edges
     Rectangle {
@@ -87,4 +74,10 @@ export component MainWindow inherits Window {
             #03080dcc 100%
         );
     }
+
+    VoiceOrb {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+    }
+
 }
