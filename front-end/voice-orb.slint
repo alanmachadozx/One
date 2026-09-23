@@ -2,7 +2,7 @@ export component VoiceOrb inherits Rectangle {
     width: 360px;
     height: 360px;
     background: transparent;
-
+    callback start_program();
     in-out property <bool> active: true;
 
     // External wine halo
@@ -216,7 +216,7 @@ export component VoiceOrb inherits Rectangle {
             drop-shadow-color: #71d9d971;
             drop-shadow-blur: root.active ? 18px : 10px;
 
-            // Forma de onda central
+            // Central wavefrom
             HorizontalLayout {
                 x: 15px;
                 y: 17px;
@@ -252,10 +252,12 @@ export component VoiceOrb inherits Rectangle {
         }
     }
 
-    // Interação para ligar ou desligar a animação
+    // Program start button
     TouchArea {
+        mouse-cursor: pointer;
         clicked => {
             root.active = !root.active;
+            root.start_program();
         }
     }
 }

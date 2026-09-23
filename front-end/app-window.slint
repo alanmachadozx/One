@@ -5,6 +5,7 @@ export component MainWindow inherits Window {
     height: 720px;
     background: #03080d;
     in-out property <bool> assistant-listening;
+    callback start_program();
 
     //main gradient
     Rectangle{
@@ -78,6 +79,8 @@ export component MainWindow inherits Window {
 
     VoiceOrb {
         active: root.assistant-listening;
+        start_program => { 
+            root.start_program();
+        }
     }
-
 }

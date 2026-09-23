@@ -37,8 +37,8 @@ class Actions:
                subprocess.Popen([target])
                _ = history_insert(action, target)
                
-            except Exception:
-                print(f"{target} not found!")
+            except Exception as e:
+                print(f"Error: {e}")
                 speech(f"{target} not found.")
                 
             else:
