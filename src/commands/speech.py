@@ -23,7 +23,7 @@ def speech(text: str):
 
 def transcribe_audio(audio):
     segments, _ = model.transcribe(audio, condition_on_previous_text=False, 
-    no_speech_threshold=0.5, vad_filter=True, initial_prompt="search")
+    no_speech_threshold=0.5, vad_filter=False, initial_prompt="search")
     text = None
     
     for segment in segments:

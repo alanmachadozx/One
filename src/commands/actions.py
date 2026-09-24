@@ -38,7 +38,6 @@ class Actions:
                _ = history_insert(action, target)
                
             except Exception:
-                print(f"{target} not found!")
                 speech(f"{target} not found.")
                 
             else:
@@ -50,7 +49,6 @@ class Actions:
                 _ = history_insert(action, target)
                 
             except Exception:
-                print(f"{target} not found!")
                 speech(f"{target} not found!")
             else:
                 speech(f"Closed {target}.")

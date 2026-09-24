@@ -1,0 +1,264 @@
+export component VoiceOrb inherits Rectangle {
+    width: 360px;
+    height: 360px;
+    background: transparent;
+    callback start_program();
+    in-out property <bool> active: true;
+
+    // External wine halo
+    Rectangle {
+        x: 14px;
+        y: 14px;
+        width: 332px;
+        height: 332px;
+        border-radius: 166px;
+
+        background: @radial-gradient(
+            circle,
+            #733d473d 0%,
+            #a6414129 31%,
+            #2612191f 57%,
+            #03080d00 75%
+        );
+
+        opacity: root.active
+            ? 0.78 + 0.22 * abs(
+                sin(animation-tick() / 7ms * 1deg)
+            )
+            : 0.5;
+    }
+
+    // Intermediate cyan halo
+    Rectangle {
+        x: 48px;
+        y: 48px;
+        width: 264px;
+        height: 264px;
+        border-radius: 132px;
+
+        background: @radial-gradient(
+            circle,
+            #71d9d92e 0%,
+            #71d9d917 43%,
+            #71d9d900 73%
+        );
+
+        opacity: root.active
+            ? 0.7 + 0.3 * abs(
+                sin(animation-tick() / 11ms * 1deg)
+            )
+            : 0.45;
+    }
+
+    // Outer orbit
+    Rectangle {
+        x: 17px;
+        y: 17px;
+        width: 326px;
+        height: 326px;
+        border-radius: 163px;
+        border-width: 1px;
+        border-color: #a6414147;
+        background: transparent;
+
+        transform-rotation:
+            animation-tick() / 30ms * 1deg;
+
+        // Red particle
+        Rectangle {
+            x: -3px;
+            y: parent.height / 2 - 3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: #a64141;
+
+            drop-shadow-color: #a64141a8;
+            drop-shadow-blur: 9px;
+        }
+    }
+
+    // Secondary orbit
+    Rectangle {
+        x: 40px;
+        y: 40px;
+        width: 280px;
+        height: 280px;
+        border-radius: 140px;
+        border-width: 1px;
+        border-color: #71d9d936;
+        background: transparent;
+
+        transform-rotation:
+            animation-tick() / -22ms * 1deg;
+
+        // Cyan particle
+        Rectangle {
+            x: parent.width - 3px;
+            y: parent.height / 2 - 2px;
+            width: 5px;
+            height: 5px;
+            border-radius: 3px;
+            background: #71d9d9;
+
+            drop-shadow-color: #71d9d9a6;
+            drop-shadow-blur: 10px;
+        }
+    }
+
+    // 56 radial bars
+    for bar[index] in 56: Rectangle {
+        width: root.width;
+        height: root.height;
+        background: transparent;
+
+        transform-rotation: index * 6.428deg;
+
+        Rectangle {
+            x: parent.width / 2 - 1px;
+            y: 18px;
+            width: 2px;
+            border-radius: 1px;
+
+            // Each bar has a different phase
+            height: root.active
+                ? 7px + 21px * abs(
+                    sin(
+                        (
+                            animation-tick() / 8ms
+                            + index * 23
+                        ) * 1deg
+                    )
+                )
+                : 7px + 7px * abs(
+                    sin(index * 31deg)
+                );
+
+            background: index.mod(4) == 0
+                ? #a64141
+                : index.mod(4) == 2
+                    ? #733d47
+                    : #71d9d9;
+
+            opacity: root.active
+                ? 0.5 + 0.5 * abs(
+                    sin(
+                        (
+                            animation-tick() / 10ms
+                            + index * 19
+                        ) * 1deg
+                    )
+                )
+                : 0.35;
+        }
+    }
+
+    // Main shell
+    Rectangle {
+        x: 79px;
+        y: 79px;
+        width: 202px;
+        height: 202px;
+        border-radius: 101px;
+        border-width: 1px;
+        border-color: #71d9d95c;
+
+        // First inner ring
+        Rectangle {
+            x: 9px;
+            y: 9px;
+            width: 184px;
+            height: 184px;
+            border-radius: 92px;
+            border-width: 1px;
+            border-color: #a6414142;
+            background: transparent;
+        }
+
+        // Second inner ring
+        Rectangle {
+            x: 28px;
+            y: 28px;
+            width: 146px;
+            height: 146px;
+            border-radius: 73px;
+            border-width: 1px;
+            border-color: #71d9d92e;
+            background: transparent;
+        }
+
+        // Interior lighting
+        Rectangle {
+            x: 51px;
+            y: 51px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+
+
+            opacity: root.active
+                ? 0.65 + 0.35 * abs(
+                    sin(animation-tick() / 9ms * 1deg)
+                )
+                : 0.4;
+        }
+
+        // Central core
+        Rectangle {
+            x: 68px;
+            y: 68px;
+            width: 66px;
+            height: 66px;
+            border-radius: 33px;
+            border-width: 1px;
+            border-color: #71d9d9a6;           
+
+            drop-shadow-color: #71d9d971;
+            drop-shadow-blur: root.active ? 18px : 10px;
+
+            // Central wavefrom
+            HorizontalLayout {
+                x: 15px;
+                y: 17px;
+                width: 36px;
+                height: 32px;
+                spacing: 4px;
+                alignment: center;
+
+                for wave[index] in 5: Rectangle {
+                    width: 3px;
+                    border-radius: 2px;
+
+                    height: root.active
+                        ? 7px + 22px * abs(
+                            sin(
+                                (
+                                    animation-tick() / 6ms
+                                    + index * 47
+                                ) * 1deg
+                            )
+                        )
+                        : index == 2
+                            ? 13px
+                            : index == 1 || index == 3
+                                ? 9px
+                                : 5px;
+
+                    background: index == 2
+                        ? #a64141
+                        : #71d9d9;
+                }
+            }
+        }
+    }
+
+    // Program start button
+    TouchArea {
+        mouse-cursor: pointer;
+        clicked => {
+            root.active = !root.active;
+            root.start_program();
+        }
+    }
+}
+
