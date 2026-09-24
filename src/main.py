@@ -1,9 +1,8 @@
-
 from src.listener import *
 import slint
-import sys
 import os
 import threading
+from src.commands.speech import speech
 
 path = os.path.dirname(os.path.abspath(__file__))
 slint_path = os.path.join(path, '..', 'front-end', 'app-window.slint')
@@ -12,11 +11,22 @@ slint_path = os.path.join(path, '..', 'front-end', 'app-window.slint')
 ui = slint.load_file(slint_path)
 app = ui.MainWindow()
 
-def background_thread():
-    linstener = threading.Thread(target=start_listerning)
-    linstener.daemon = True
-    linstener.start()
+event_status = threading.Event()
+event_status.clear()
 
-app.start_program = background_thread
+def switch():
+    #Is called when the user toggles the program on/off
+    # If event_status is true, the clear() reverts to the default value (false)
+    if event_status.is_set():
+        event_status.clear()
+    else:
+        event_status.set()
+
+app.start_program = switch
+
+linstener = threading.Thread(target=start_listerning, args=(event_status,))
+linstener.daemon = True
+linstener.start()
+
 app.run()
 
