@@ -1,3 +1,8 @@
+
+"""
+This module contains the APIs for interacting with the Gemini and Spotify APIs.
+"""
+
 import time
 from google import genai
 from google.genai.errors import APIError

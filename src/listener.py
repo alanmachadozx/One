@@ -1,3 +1,11 @@
+"""
+This is the core part of the code: speech is captured, 
+and the resulting bytes are stored in a list (q). 
+The data then passes through a transcription function that converts it into text (in English). 
+Once converted, the text is processed by a Lexer/Parser/AST structure;
+within the AST, it undergoes a conditional check to determine whether it constitutes a valid command.
+"""
+
 import sounddevice as sd
 from src.commands.actions import *
 import numpy as np

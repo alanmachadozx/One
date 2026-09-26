@@ -1,3 +1,5 @@
+# This is where the connection between `start_listening()` and the interface is made.
+
 from src.listener import *
 import slint
 import os

@@ -1,3 +1,8 @@
+
+"""
+This is where the link between identifying the command and executing the action occurs.
+"""
+
 import subprocess
 import webbrowser
 from src.commands.apis import *
