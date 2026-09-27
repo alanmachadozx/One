@@ -19,5 +19,6 @@ trash_tokens = {
     "a",
     "an",
     "the",
-    "on",    
+    "on",
+    "for",
 }

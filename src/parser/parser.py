@@ -5,7 +5,7 @@ The parser is where the distinction is made between elements conveying an intend
 """
 
 from src.lexer.token import Token, TokenType
-from src.commands.registry import registry_commands
+from src.commands.registry import registry_commands, trash_tokens
 
 class CommandExpr:
         pass
@@ -89,6 +89,13 @@ class Parser:
 
         return action, target
 
+    def clear_target(self, buffer: list[str]):
+        clear_target: list[str] = []
+        for i in buffer:
+            if i not in trash_tokens:
+                clear_target.append(i)
+        return clear_target
+
     def parse(self):
         buffer: list[str] = []
 
@@ -103,9 +110,13 @@ class Parser:
         
         if action and registry_commands.get(action):
             raw_text = registry_commands[action]["raw_text"]
-                
-            
-        left = SingleAction(action, "test")
+
+            if not raw_text:
+                target = self.clear_target(target)
+
+        target = " ".join(target)
+        
+        left = SingleAction(action, target)
 
         if self.match("and"):
             operator = self.previous().lexeme
