@@ -12,6 +12,12 @@ registry_commands = {
     "stop music": {"raw_text": False},
     "start music": {"raw_text": False},
     "up volume": {"raw_text": False},
-    "down volume": {"raw_text": False},
-    
+    "down volume": {"raw_text": False},   
+}
+
+trash_tokens = {
+    "a",
+    "an",
+    "the",
+    "on",    
 }

@@ -4,7 +4,6 @@ The parser is where the distinction is made between elements conveying an intend
 (such as *and*, *in*, *to*, *on*). Furthermore, the command is separated into a target and an action.
 """
 
-from src.commands import actions
 from src.lexer.token import Token, TokenType
 from src.commands.registry import registry_commands
 
@@ -13,20 +12,20 @@ class CommandExpr:
 
 class SingleAction(CommandExpr):
     def __init__(self, action: str | None, target: str):
-        self.target = target
-        self.action = action
+        self.target: str = target
+        self.action: str | None = action
 
 class SequenceAction(CommandExpr):
     def __init__(self, left: CommandExpr, operator: str, right: CommandExpr):
-        self.left = left
-        self.operator = operator
-        self.right = right
+        self.left: CommandExpr = left
+        self.operator: str = operator
+        self.right: CommandExpr = right
 
 class Parser:
     def __init__(self, tokens: list[Token]):
-        self.tokens = tokens
-        self.current_token = 0
-        self.actions = { #picks all token types except AND and IDENTIFIER
+        self.tokens: list[Token] = tokens
+        self.current_token: int = 0
+        self.actions: set[TokenType] = { #picks all token types except AND and IDENTIFIER
             t for t in TokenType if t not in (TokenType.AND, TokenType.IDENTIFIER)
         }
 
@@ -65,19 +64,10 @@ class Parser:
             return False
         return self.peek_next().type in self.actions
 
-    def parse(self):
-        buffer = []
-
-        while self.current_token < len(self.tokens) and not self.check("and"):
-            buffer.append(self.peek().lexeme)
-            self.advance()
-            
-        return buffer
-
-    def parse_command(self) -> CommandExpr:
+    def valid_action(self):
         action = None
-        target = " "
-        
+        target: list[str] = []
+
         if self.is_action():
             #splits the structure into {"action", "target"},
             #transforms two action tokens into a single action if it is a compound command, like "create task"
@@ -87,21 +77,35 @@ class Parser:
                 action = self.peek().lexeme
                 
             self.advance()
-            target = " ".join(self.parse())
+            target = self.parse().copy()
             
         else:
-            target = " ".join(self.parse())
+            target = self.parse().copy()
 
         if self.check("and") and not self.next_is_action():
-            target = target + " " + " ".join(self.peek().lexeme)
+            target.append(self.peek().lexeme)
             self.advance()
-            target = target + " " + " ".join(self.parse())
+            target = target + self.parse()
 
+        return action, target
+
+    def parse(self):
+        buffer: list[str] = []
+
+        while self.current_token < len(self.tokens) and not self.check("and"):
+            buffer.append(self.peek().lexeme)
+            self.advance()
+            
+        return buffer
+
+    def parse_command(self) -> CommandExpr:
+        action, target = self.valid_action()
+        
         if action and registry_commands.get(action):
             raw_text = registry_commands[action]["raw_text"]
-            print(raw_text)
+                
             
-        left = SingleAction(action, target)
+        left = SingleAction(action, "test")
 
         if self.match("and"):
             operator = self.previous().lexeme
