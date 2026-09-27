@@ -1,8 +1,12 @@
+
 """
 The parser is where the distinction is made between elements conveying an intended action and those that merely complement the sentence 
 (such as *and*, *in*, *to*, *on*). Furthermore, the command is separated into a target and an action.
 """
+
+from src.commands import actions
 from src.lexer.token import Token, TokenType
+from src.commands.registry import registry_commands
 
 class CommandExpr:
         pass
@@ -92,6 +96,10 @@ class Parser:
             target = target + " " + " ".join(self.peek().lexeme)
             self.advance()
             target = target + " " + " ".join(self.parse())
+
+        if action and registry_commands.get(action):
+            raw_text = registry_commands[action]["raw_text"]
+            print(raw_text)
             
         left = SingleAction(action, target)
 
