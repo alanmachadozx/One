@@ -1,6 +1,6 @@
 """
 The parser is where the distinction is made between elements conveying an intended action and those that merely complement the sentence 
-(such as *and*, *for*, *to*, *the*, *a*). Furthermore, the command is separated into a target and an action.
+(such as *and*, *in*, *to*, *on*). Furthermore, the command is separated into a target and an action.
 """
 from src.lexer.token import Token, TokenType
 

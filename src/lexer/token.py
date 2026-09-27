@@ -26,6 +26,7 @@ class TokenType(StrEnum):
     CREATE = "create"
     IDENTIFIER = "identifier"
     TASK = "task"
+    MUSIC = "music"
 
 @dataclass
 class Token:

@@ -32,7 +32,7 @@ class Actions:
             speech(f"Task {target} created.")
             _ = history_insert(action, target)
             
-        if action == "view" and target == "history":
+        if action == "view history":
             db_query()
             _ = history_insert(action, target)
             
@@ -65,7 +65,7 @@ class Actions:
             print(response)
             _ = history_insert(action, target)
         
-        if action == "search":
+        if action == "search for":
             formatted_content = urllib.parse.quote(target)
             url = f"https://www.google.com/search?q={formatted_content}"
             
@@ -101,7 +101,7 @@ class Actions:
             _ = history_insert(action, target)
             speech("Update started.")
         
-        if action == "next" and target == "music":
+        if action == "next music":
             subprocess.Popen(["playerctl", "next"])
             _ = history_insert(action, target)
 
@@ -113,10 +113,10 @@ class Actions:
             subprocess.Popen(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
             _ = history_insert(action, target)
 
-        if action == "stop" and target == "music":
+        if action == "stop music":
             subprocess.Popen(["playerctl", "stop"])
             _ = history_insert(action, target)
 
-        if action == "start" and target == "music":
+        if action == "start music":
             subprocess.Popen(["playerctl", "play"])
             _ = history_insert(action, target)
