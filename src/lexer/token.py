@@ -11,10 +11,8 @@ class TokenType(StrEnum):
     CLOSE = "close"
     AND = "and"
     ONE = "one"
-    THE = "the"
     PLAY = "play"
     SEARCH = "search"
-    FOR = "for"
     GEMINI = "gemini"
     STOP = "stop"
     START = "start"
@@ -26,12 +24,7 @@ class TokenType(StrEnum):
     CREATE = "create"
     IDENTIFIER = "identifier"
     TASK = "task"
-    ON = "on"
     MUSIC = "music"
-    AN = "an"
-    A = "a"
-
-    
 
 @dataclass
 class Token:

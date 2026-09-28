@@ -1,3 +1,6 @@
+
+#A dictionary containing all commands, where each command has a "tag" (raw_text). 
+#If the tag is True, the command must not be cleaned/filtered by the clear_target() function.
 registry_commands = {
     "open": {"raw_text": False},
     "close": {"raw_text": False},
@@ -15,6 +18,7 @@ registry_commands = {
     "down volume": {"raw_text": False},   
 }
 
+#The tokens that will be discarded when clear-target() is executed
 trash_tokens = {
     "a",
     "an",

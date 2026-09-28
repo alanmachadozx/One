@@ -5,13 +5,14 @@ which are not—treating ordinary words (non-tokens) as identifiers. Afterward, 
 """
 
 from src.lexer.token import *
+from thefuzz import fuzz
 
 #translate a string into a list of tokens
 class Scanner:
     def __init__(self, text: str):
-        self.text = text
-        self.current = 0
-        self.tokens = []
+        self.text: str = text
+        self.current: int = 0
+        self.tokens: list[Token] = []
 
     def finished(self):
         return self.current >= len(self.text)
@@ -19,9 +20,15 @@ class Scanner:
     def advance(self):
         self.current += 1
         return self.text[self.current - 1]
-        
+
+    # Checks if the received word is similar to an existing token
+    def fuzzy_match(self, text: str):
+        for tokens in TokenType:
+            if fuzz.partial_ratio(tokens.value, text) > 80:
+                return tokens.value
+        return text
+
     def scan(self):
-        
         while not self.finished():
             self.scan_single_token()
             
@@ -39,7 +46,7 @@ class Scanner:
                 c = self.advance()
 
             try:
-                token_type = TokenType(buffer)
+                token_type = TokenType(self.fuzzy_match(buffer))
 
             except ValueError:
                 token_type = TokenType.IDENTIFIER
