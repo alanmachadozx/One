@@ -51,4 +51,4 @@ class Scanner:
             except ValueError:
                 token_type = TokenType.IDENTIFIER
 
-            self.tokens.append(Token(type= token_type, lexeme= buffer))
+            self.tokens.append(Token(type=token_type, lexeme= self.fuzzy_match(buffer)))
