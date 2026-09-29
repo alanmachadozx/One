@@ -72,7 +72,8 @@ class Parser:
             #splits the structure into {"action", "target"},
             #transforms two action tokens into a single action if it is a compound command, like "create task"
             if self.next_is_action():
-                action = self.peek().lexeme + " " + self.peek_next().lexeme 
+                action = self.peek().lexeme + " " + self.peek_next().lexeme
+                self.advance()
             else:
                 action = self.peek().lexeme
                 
@@ -81,7 +82,9 @@ class Parser:
             
         else:
             target = self.parse().copy()
-
+        #It deals with cases where, instead of two commands connected by an AND operator,
+        #there is a single command with a target containing the `and` token. 
+        #If the next token is an action, the parser treats it as two separate commands.
         if self.check("and") and not self.next_is_action():
             target.append(self.peek().lexeme)
             self.advance()
