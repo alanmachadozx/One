@@ -1,3 +1,10 @@
+"""
+
+This file is responsible for testing the lexical analyzer in isolation from the main code,
+with the aim of verifying whether a specific new function is functional.
+
+"""
+
 import unittest
 from src.lexer.scanner import *
 from src.lexer.token import *
