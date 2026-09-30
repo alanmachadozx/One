@@ -12,7 +12,7 @@ from src.lexer.token import *
 class TestLexer(unittest.TestCase):
     
     def test_similarity(self):                                                    #An indentifier exemple
-        similar_texts = ["opening", "closing", "starting", "playing", "isthat", "a"]
+        similar_texts = ["opeini", "closing", "starting", "playing", "isthat", "a"]
         for text in similar_texts:
             scanner = Scanner(text)
             scanner.scan()
