@@ -27,8 +27,19 @@ def speech(text: str):
     time.sleep(0.4)
 
 def transcribe_audio(audio):
-    segments, _ = model.transcribe(audio, language="en", condition_on_previous_text=False, 
-    no_speech_threshold=0.5, vad_filter=False, beam_size=1)
+    prompts = "open, close, play, search, volume, start, stop, music, gemini, up, down, task, create, view"
+    segments, _ = model.transcribe(
+        audio, 
+        language="en",
+        condition_on_previous_text=False, 
+        no_speech_threshold=0.6,         
+        vad_filter=True, 
+        beam_size=5, 
+        temperature=[0.0, 0.2, 0.4, 0.6], 
+        compression_ratio_threshold=2.4,  
+        log_prob_threshold=-1.0,
+        initial_prompt=prompts,
+       )
     text = None
     
     for segment in segments:

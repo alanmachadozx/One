@@ -68,20 +68,22 @@ class Parser:
         action = None
         target: list[str] = []
 
-        if self.is_action():
-            #splits the structure into {"action", "target"},
-            #transforms two action tokens into a single action if it is a compound command, like "create task"
-            if self.next_is_action():
-                action = self.peek().lexeme + " " + self.peek_next().lexeme
-                self.advance()
-            else:
-                action = self.peek().lexeme
-                
+        while self.current_token < len(self.tokens):
+            if self.is_action():
+                #splits the structure into {"action", "target"},
+                #transforms two action tokens into a single action if it is a compound command, like "create task"
+                if self.next_is_action():
+                    action = self.peek().lexeme + " " + self.peek_next().lexeme
+                    self.current_token += 2
+                    break
+                else:
+                    action = self.peek().lexeme
+                    self.advance()
+                    break
             self.advance()
-            target = self.parse().copy()
             
-        else:
-            target = self.parse().copy()
+        target = self.parse().copy()
+        
         #It deals with cases where, instead of two commands connected by an AND operator,
         #there is a single command with a target containing the `and` token. 
         #If the next token is an action, the parser treats it as two separate commands.
@@ -91,7 +93,8 @@ class Parser:
             target = target + self.parse()
 
         return action, target
-
+    #Removes tokens that do not contribute to the interpretation of the provided command,
+    #for example: "the", "a", "an", "for", among others.
     def clear_target(self, buffer: list[str]):
         clear_target: list[str] = []
         for i in buffer:
@@ -110,10 +113,13 @@ class Parser:
 
     def parse_command(self) -> CommandExpr:
         action, target = self.valid_action()
-        
+
+        #Check whether the action requires a direct target or a target with context, for example:
+        #"Gemini, what day is it?" is a target with context.
         if action and registry_commands.get(action):
             raw_text = registry_commands[action]["raw_text"]
 
+            #If context is not needed, remove the tokens that will not aid in interpreting the command.
             if not raw_text:
                 target = self.clear_target(target)
 

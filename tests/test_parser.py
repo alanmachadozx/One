@@ -40,7 +40,7 @@ class TestParser(unittest.TestCase):
     # Tests composite actions that consist of more than one action token.
     def test_compound_action(self):
         # create and task are two separate actions in TokenType class
-        text = "create task make a coffee" 
+        text = "I am going to create task make a coffee" 
         parser = self.parser_result(text)
         
         print("\n########### Compound action test ###########")

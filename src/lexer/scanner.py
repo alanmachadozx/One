@@ -14,6 +14,7 @@ _dict_ref = importlib.resources.files("symspellpy") / "frequency_dictionary_en_8
 
 with importlib.resources.as_file(_dict_ref) as path:
     _SYM_SPELL_INSTANCE.load_dictionary(str(path), term_index=0, count_index=1)
+    
 #translate a string into a list of tokens
 class Scanner:
     def __init__(self, text: str):
@@ -36,7 +37,8 @@ class Scanner:
             if jellyfish.nysiis(tokens.value) == text_phonetic:
                 return tokens.value
         return text
-    
+
+    # Applies text correction, replacing any misspelled words with their closest match.
     def text_correction(self, text: str):
         suggestion = self.sym_spell.lookup(text, Verbosity.TOP, max_edit_distance=2)
         return suggestion[0].term if suggestion else text
