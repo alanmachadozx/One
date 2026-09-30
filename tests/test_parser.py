@@ -56,6 +56,13 @@ class TestParser(unittest.TestCase):
         print("\n########### AND in context test ###########")
         self.ast_example(parser)
 
+    def test_clear_target(self):
+        text = "open a firefox"
+        parser = self.parser_result(text)
+
+        print("\n########### Clear target test ###########")
+        self.ast_example(parser)
+
 if __name__ == '__main__':
     unittest.main()
         

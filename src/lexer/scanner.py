@@ -4,8 +4,12 @@ The scanner is responsible for identifying which words in the received text are 
 which are not—treating ordinary words (non-tokens) as identifiers. Afterward, it stores the tokens in an array.
 """
 
+from annotated_types import SupportsGe
+
 from src.lexer.token import *
-from thefuzz import fuzz
+import jellyfish
+import importlib.resources
+from symspellpy import SymSpell, Verbosity
 
 #translate a string into a list of tokens
 class Scanner:
@@ -22,12 +26,22 @@ class Scanner:
         return self.text[self.current - 1]
 
     # Checks if the received word is similar to an existing token
-    def fuzzy_match(self, text: str):
+    def similar_sound(self, text: str):
         for tokens in TokenType:
-            if fuzz.partial_ratio(tokens.value, text) > 80:
+            if jellyfish.nysiis(tokens.value) == jellyfish.nysiis(text):
                 return tokens.value
         return text
 
+    def text_correction(self, text: str):
+        sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
+        ref = importlib.resources.files("symspellpy") / "frequency_dictionary_en_82_765.txt"
+
+        with importlib.resources.as_file(ref) as path:
+            sym_spell.load_dictionary(str(path), term_index=0, count_index=1)
+
+            suggestion = sym_spell.lookup(text, Verbosity.TOP, max_edit_distance=2)
+            return suggestion[0].term if suggestion else text
+    
     def scan(self):
         while not self.finished():
             self.scan_single_token()
@@ -45,10 +59,12 @@ class Scanner:
                     break
                 c = self.advance()
 
+            buffer = self.similar_sound(buffer)
+        
             try:
-                token_type = TokenType(self.fuzzy_match(buffer))
+                token_type = TokenType(self.text_correction(buffer))
 
             except ValueError:
                 token_type = TokenType.IDENTIFIER
 
-            self.tokens.append(Token(type=token_type, lexeme= self.fuzzy_match(buffer)))
+            self.tokens.append(Token(type=token_type, lexeme= self.text_correction(buffer)))
