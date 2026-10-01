@@ -3,8 +3,9 @@
 This file is responsible for testing the parser in isolation from the main code,
 with the aim of verifying whether a specific new function is functional.
 
-"""
+to execute: python -m unittest tests/test_parser.py
 
+"""
 
 import unittest
 from src.parser.parser import *

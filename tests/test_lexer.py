@@ -3,6 +3,8 @@
 This file is responsible for testing the lexical analyzer in isolation from the main code,
 with the aim of verifying whether a specific new function is functional.
 
+to execute: python -m unittest tests/test_lexer.py
+
 """
 
 import unittest
@@ -11,7 +13,7 @@ from src.lexer.token import *
 
 class TestLexer(unittest.TestCase):
     
-    def test_similarity(self):                                                    #An indentifier exemple
+    def test_similarity(self):                                             
         similar_texts = ["opeini", "closa", "creati", "satrt"]
         for text in similar_texts:
             scanner = Scanner(text)
