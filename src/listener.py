@@ -1,3 +1,11 @@
+"""
+This is the core part of the code: speech is captured, 
+and the resulting bytes are stored in a list (q). 
+The data then passes through a transcription function that converts it into text (in English). 
+Once converted, the text is processed by a Lexer/Parser/AST structure;
+within the AST, it undergoes a conditional check to determine whether it constitutes a valid command.
+"""
+
 import sounddevice as sd
 from src.commands.actions import *
 import numpy as np
@@ -8,7 +16,7 @@ from src.ast.checker import ast_checker
 from src.commands.speech import speech, transcribe_audio
 import src.state as state
 
-vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
+vad = webrtcvad.Vad(2) #set aggressiveness mode, where 3 is the most agressive
 
 SAMPLERATE = 16000
 FRAMEDURATION = 30 #ms
@@ -73,7 +81,7 @@ def start_listerning(event_status: threading.Event):
                     continue
 
 
-                is_processing = True
+                state.is_processing = True
                 
                 try:
                     text = transcribe_audio(audio_chunk)

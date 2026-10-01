@@ -1,3 +1,9 @@
+
+"""
+This is where the connection to the database is established and the functions that manipulate it are defined.
+It runs on a thread separate from the UI and the start_listening() function.
+"""
+
 import sqlite3
 from datetime import datetime
 import queue

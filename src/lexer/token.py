@@ -1,3 +1,7 @@
+"""
+Where it is defined which words will be tokens.
+"""
+
 from enum import StrEnum
 from dataclasses import dataclass
 
@@ -7,10 +11,8 @@ class TokenType(StrEnum):
     CLOSE = "close"
     AND = "and"
     ONE = "one"
-    THE = "the"
     PLAY = "play"
     SEARCH = "search"
-    FOR = "for"
     GEMINI = "gemini"
     STOP = "stop"
     START = "start"
@@ -22,6 +24,7 @@ class TokenType(StrEnum):
     CREATE = "create"
     IDENTIFIER = "identifier"
     TASK = "task"
+    MUSIC = "music"
 
 @dataclass
 class Token:

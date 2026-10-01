@@ -7,7 +7,7 @@ import contextlib
 import src.state as state
 import time
 
-model = WhisperModel("small.en", device= "cpu", compute_type= "int8")
+model = WhisperModel("base.en", device= "cpu", compute_type= "int8")
 
 #Função para voz de resposta a comandos
 def speech(text: str):
@@ -27,8 +27,19 @@ def speech(text: str):
     time.sleep(0.4)
 
 def transcribe_audio(audio):
-    segments, _ = model.transcribe(audio, condition_on_previous_text=False, 
-    no_speech_threshold=0.5, vad_filter=False)
+    prompts = "open, close, play, search, volume, start, stop, music, gemini, up, down, task, create, view"
+    segments, _ = model.transcribe(
+        audio, 
+        language="en",
+        condition_on_previous_text=False, 
+        no_speech_threshold=0.6,         
+        vad_filter=True, 
+        beam_size=5, 
+        temperature=[0.0, 0.2, 0.4, 0.6], 
+        compression_ratio_threshold=2.4,  
+        log_prob_threshold=-1.0,
+        initial_prompt=prompts,
+       )
     text = None
     
     for segment in segments:
@@ -46,7 +57,8 @@ def limited_hear():
             state.q.get_nowait()
         except queue.Empty:
             pass
-            
+    
+    # Set is_processing to False to indicate that the listener is not processing
     state.is_processing = False
     try:
         yield
