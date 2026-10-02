@@ -1,10 +1,10 @@
 # This is where the connection between `start_listening()` and the interface is made.
 
-from src.listener import *
+from src.audio.listener import *
 import slint
 import os
 import threading
-from src.commands.speech import speech
+from src.audio.speech import speech
 
 path = os.path.dirname(os.path.abspath(__file__))
 slint_path = os.path.join(path, '..', 'front-end', 'app-window.slint')

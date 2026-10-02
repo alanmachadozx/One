@@ -13,7 +13,7 @@ import webrtcvad
 from src.lexer.scanner import *
 from src.parser.parser import *
 from src.ast.checker import ast_checker
-from src.commands.speech import speech, transcribe_audio
+from src.audio.speech import speech, transcribe_audio
 import src.state as state
 
 vad = webrtcvad.Vad(2) #set aggressiveness mode, where 3 is the most agressive

@@ -7,7 +7,7 @@ import subprocess
 import webbrowser
 from src.commands.apis import *
 import urllib.parse
-from src.commands.speech import *
+from src.audio.speech import *
 from database.db import * 
 
 
