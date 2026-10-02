@@ -1,0 +1,65 @@
+{
+ "OPEN_APP": [
+   "open",
+   "launch"
+ ],
+
+ "CLOSE_APP": [
+   "close",
+   "quit",
+   "exit"
+ ],
+
+ "SEARCH": [
+   "search",
+   "find",
+   "look for"
+ ],
+
+ "ASK_GEMINI": [
+   "gemini",
+   "one"
+ ],
+ 
+ "VIEW_TASKS": [
+   "view",
+   "list",
+   "show"
+ ],
+ 
+ "ADD_TASK": [
+   "add",
+   "create",
+   "new"
+  ],
+
+  "PLAY_MUSIC": [
+   "play",
+   "listen",
+   "start"
+  ],
+
+  "UPDATE": [
+    "update"
+  ],
+
+  "NEXT_MUSIC": [
+    "next",
+    "skip"
+  ],
+
+  "STOP_MUSIC": [
+    "stop",
+    "pause"
+  ],
+
+  "UP_VOL": [
+    "up",
+    "increase"
+  ],
+
+  "DOWN_VOL": [
+    "down",
+    "decrease"
+  ]
+}

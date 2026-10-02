@@ -6,3 +6,4 @@ spotipy
 symspellpy
 jellyfish
 slint
+scikit-learn
