@@ -6,6 +6,7 @@ The parser is where the distinction is made between elements conveying an intend
 
 from src.lexer.token import Token, TokenType
 from src.commands.registry import registry_commands, trash_tokens
+from src.classifier.model import *
 
 class CommandExpr:
         pass
@@ -13,7 +14,7 @@ class CommandExpr:
 class SingleAction(CommandExpr):
     def __init__(self, action: str | None, target: str):
         self.target: str = target
-        self.action: str | None = action
+        self.intent: str | None = action
 
 class SequenceAction(CommandExpr):
     def __init__(self, left: CommandExpr, operator: str, right: CommandExpr):
@@ -119,13 +120,17 @@ class Parser:
         if action and registry_commands.get(action):
             raw_text = registry_commands[action]["raw_text"]
 
-            #If context is not needed, remove the tokens that will not aid in interpreting the command.
+        #If context is not needed, remove the tokens that will not aid in interpreting the command.
             if not raw_text:
                 target = self.clear_target(target)
 
         target = " ".join(target)
+
+        classifier = Classifier()
+        intent_object = classifier.get_intent(action)
+        intent = intent_object.intent
         
-        left = SingleAction(action, target)
+        left = SingleAction(intent, target)
 
         if self.match("and"):
             operator = self.previous().lexeme

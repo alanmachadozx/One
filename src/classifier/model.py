@@ -1,3 +1,8 @@
+
+"""
+This file provides an intent classification model using a Naive Bayes classifier.
+"""
+
 import joblib
 from sklearn.externals.array_api_compat.numpy import concat
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -11,7 +16,7 @@ class IntentResult:
     confidence: float
 
 class Classifier:
-    def __init__(self, path: str | None = None):
+    def __init__(self, path: str | None = "src/classifier/model.joblib"):
         self.pipeline = None
         if path:
             self.model = self.load(path)
@@ -23,13 +28,17 @@ class Classifier:
             TfidfVectorizer(ngram_range=(1, 2)), 
             MultinomialNB()
         )
-        
+        # Fit the pipeline on the text and labels.
         self.pipeline = self.pipeline.fit(text, labels)
 
-    def get_intent(self, text: str):
+    # Get the intent of the given text.
+    def get_intent(self, text: str | None):
         if not self.model:
             raise ValueError("Model not loaded")
-        
+
+        if text is None:
+            return IntentResult(intent="UNKNOWN", confidence=0.0)
+
         probabilities = self.model.predict_proba([text])[0]
         max_idx = probabilities.argmax()
         confidence = float(probabilities[max_idx])

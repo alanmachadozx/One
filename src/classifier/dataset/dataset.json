@@ -1,17 +1,17 @@
 {
  "OPEN_APP": [
-   "open",
+   "open the",
    "launch"
  ],
 
  "CLOSE_APP": [
-   "close",
+   "close the",
    "quit",
    "exit"
  ],
 
  "SEARCH": [
-   "search",
+   "search for",
    "find",
    "look for"
  ],
@@ -28,8 +28,8 @@
  ],
  
  "ADD_TASK": [
-   "add",
-   "create",
+   "add a",
+   "create a",
    "new"
   ],
 
