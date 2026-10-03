@@ -16,7 +16,7 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
-def ask_gemini(text, retries=3):
+def ask_gemini(text: str, retries=3):
     for attempt in range(retries):
         try:
             response = client.models.generate_content(
