@@ -1,65 +1,85 @@
 {
  "OPEN_APP": [
    "open the",
-   "launch"
+   "launch the program",
+   "launch",
+   "start the program"
  ],
 
  "CLOSE_APP": [
-   "close the",
+   "close the program",
+   "close",
    "quit",
-   "exit"
+   "exit program"
  ],
 
  "SEARCH": [
    "search for",
-   "find",
-   "look for"
+   "search in web",
+   "find for me",
+   "look for",
+   "search in google"
  ],
 
  "ASK_GEMINI": [
    "gemini",
-   "one"
+   "one",
+   "gemini search for me"
  ],
  
  "VIEW_TASKS": [
-   "view",
-   "list",
-   "show"
+   "view tasks",
+   "list all tasks",
+   "show all tasks",
+   "i want to see my tasks",
+   "show my tasks",
+   "What are my tasks?"
  ],
  
  "ADD_TASK": [
-   "add a",
-   "create a",
-   "new"
+   "add a task",
+   "create a new task",
+   "new task", 
+   "make a task",
+   "i want to create a task"
   ],
 
   "PLAY_MUSIC": [
-   "play",
-   "listen",
-   "start"
+   "play for me",
+   "i need to listen",
+   "start",
+   "start the music"
   ],
 
   "UPDATE": [
+    "update the system",
     "update"
   ],
 
   "NEXT_MUSIC": [
-    "next",
-    "skip"
+    "next music",
+    "skip this music",
+    "skip to next",
+    "play next music",
+    "advance to next music",
+    "advance music"
   ],
 
   "STOP_MUSIC": [
-    "stop",
-    "pause"
+    "stop the music",
+    "pause music",
+    "stop this music"
   ],
 
   "UP_VOL": [
-    "up",
-    "increase"
+    "up the volume",
+    "increase volume",
+    "raise volume"
   ],
 
   "DOWN_VOL": [
-    "down",
-    "decrease"
+    "down the volume",
+    "decrease volume",
+    "lower volume"
   ]
 }
