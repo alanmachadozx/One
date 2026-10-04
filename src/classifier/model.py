@@ -16,10 +16,11 @@ class IntentResult:
     confidence: float
 
 class Classifier:
-    def __init__(self, path: str | None = "src/classifier/model.joblib"):
+    def __init__(self, path: str | None = "src/classifier/model.joblib", threshold: float = 0.12):
         self.pipeline = None
         if path:
             self.model = self.load(path)
+        self.threshold = threshold
 
     # Train the classifier on the given text and labels.
     # Vectorizes the text and fits a Naive Bayes classifier.
@@ -44,9 +45,9 @@ class Classifier:
         confidence = float(probabilities[max_idx])
         intent = self.model.classes_[max_idx]
 
-        if confidence < 0.1:
+        if confidence < self.threshold:
+            
             return IntentResult(intent="UNKNOWN", confidence=confidence)
-
         return IntentResult(intent=intent, confidence=confidence)
     
     # Save the model to a file using joblib.

@@ -64,6 +64,20 @@ class Parser:
                 clear_target.append(i)
         return clear_target
 
+    def define_target(self) -> str:
+        buffer = self.parse()
+
+        if self.intent and registry_commands.get(self.intent):
+            raw_text = registry_commands[self.intent].get("raw_text", False)
+            
+        # If the raw_text is true in a intent, clear the target of any ignored words
+            if raw_text:
+                buffer = self.clear(buffer)
+
+        target = " ".join(buffer)
+        return target
+
+        
     def parse(self):
         buffer: list[str] = []
 
@@ -74,24 +88,28 @@ class Parser:
         return buffer
 
     def parse_command(self) -> CommandExpr:
-        target = self.parse()
+        target = self.define_target()
+        first_intent = self.intent
 
-        
-        if self.intent and registry_commands.get(self.intent):
-            raw_text = registry_commands[self.intent]["raw_text"]
-            
-        # If the raw_text is true in a intent, clear the target of any ignored words
-            if raw_text:
-                target = self.clear(target)
-
-        target = " ".join(target)
-
-        left = SingleAction(self.intent, target)
-
-        if self.match("and"):
+        while self.match("and"):
             operator = self.previous().lexeme
-            right = self.parse_command()
+            position = self.current_token
+
+            buffer = self.parse()
+            text = " ".join(buffer)
             
-            return SequenceAction(left, operator, right)
-        
-        return left
+            classifier = Classifier()
+            intent_object = classifier.get_intent(text)
+            
+            if intent_object.intent == "UNKNOWN":
+                target = target + " "+ operator + " " + text
+            else:
+                self.intent = intent_object.intent
+                self.current_token = position
+
+                left = SingleAction(first_intent, target)
+                right = self.parse_command()
+
+                return SequenceAction(left, operator, right)
+
+        return SingleAction(first_intent, target)
