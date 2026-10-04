@@ -18,7 +18,7 @@ with importlib.resources.as_file(_dict_ref) as path:
 #translate a string into a list of tokens
 class Scanner:
     def __init__(self, text: str):
-        self.text: str = text
+        self.text: str = self.text_correction(text)
         self.current: int = 0
         self.tokens: list[Token] = []
         self.sym_spell = _SYM_SPELL_INSTANCE
@@ -29,14 +29,6 @@ class Scanner:
     def advance(self):
         self.current += 1
         return self.text[self.current - 1]
-
-    # Checks if the received word is similar to an existing token
-    def similar_sound(self, text: str):
-        text_phonetic = jellyfish.nysiis(text)
-        for tokens in TokenType:
-            if jellyfish.nysiis(tokens.value) == text_phonetic:
-                return tokens.value
-        return text
 
     # Applies text correction, replacing any misspelled words with their closest match.
     def text_correction(self, text: str):
@@ -59,13 +51,11 @@ class Scanner:
                 if self.finished():
                     break
                 c = self.advance()
-
-            buffer = self.similar_sound(buffer)
         
             try:
-                token_type = TokenType(self.text_correction(buffer))
+                token_type = TokenType(buffer)
 
             except ValueError:
                 token_type = TokenType.IDENTIFIER
 
-            self.tokens.append(Token(type=token_type, lexeme= self.text_correction(buffer)))
+            self.tokens.append(Token(type=token_type, lexeme= buffer))
