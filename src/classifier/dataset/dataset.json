@@ -42,6 +42,13 @@
    "make task"
   ],
 
+  "VIEW_HISTORY": [
+    "view history",
+    "show history",
+    "list history",
+    "what did i do?"
+  ],
+
   "PLAY_MUSIC": [
    "play",
    "listen",
@@ -66,6 +73,10 @@
     "stop the music",
     "pause music",
     "stop this music"
+  ],
+
+  "RESUME_MUSIC": [
+    "resume music"
   ],
 
   "UP_VOL": [

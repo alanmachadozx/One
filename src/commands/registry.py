@@ -6,7 +6,7 @@ class CommandConfig(TypedDict):
     ignore_words: list[str]
 
 #A dictionary containing all commands, where each command has a "tag" (raw_text). 
-#If the tag is True, the command must not be cleaned/filtered by the clear_target() function.
+#If the tag is True, the command must be cleaned/filtered by the clear_target() function.
 registry_commands: dict[str, CommandConfig]= {
     "OPEN_APP": {
         "raw_text": True,
@@ -28,6 +28,7 @@ registry_commands: dict[str, CommandConfig]= {
         "raw_text": False,
         "ignore_words": []
     },
+    
     "VIEW_HISTORY": {
         "raw_text": False,
         "ignore_words": []
@@ -60,4 +61,10 @@ registry_commands: dict[str, CommandConfig]= {
         "raw_text": False,
         "ignore_words": []
     },
+    "RESUME_MUSIC": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+
 }
+    
