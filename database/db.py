@@ -78,9 +78,9 @@ def view_tasks():
     for row in result:
         print(row)
 
-def history_insert(action:str, target: str):
+def history_insert(intent:str, target: str):
     sql = "INSERT INTO history(action, target) VALUES(?, ?)"
-    q_requests.put((sql, (action, target)))
+    q_requests.put((sql, (intent, target)))
     q_result.get()
 
 def db_query():

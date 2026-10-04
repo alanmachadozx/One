@@ -12,9 +12,9 @@ class CommandExpr:
         pass
 
 class SingleAction(CommandExpr):
-    def __init__(self, action: str | None, target: str):
+    def __init__(self, intent: str | None, target: str):
         self.target: str = target
-        self.intent: str | None = action
+        self.intent: str | None = intent
 
 class SequenceAction(CommandExpr):
     def __init__(self, left: CommandExpr, operator: str, right: CommandExpr):
@@ -34,9 +34,6 @@ class Parser:
     def advance(self):
         self.current_token += 1
 
-    def peek_next(self) -> Token:
-        return self.tokens[self.current_token + 1]
-
     def previous(self) -> Token:
         return self.tokens[self.current_token - 1]
         
@@ -53,6 +50,8 @@ class Parser:
             return True
         return False
 
+    # Clears the buffer, removing any words that should be ignored
+    # based on the current intent
     def clear(self, buffer: list[str]):
         clear_target: list[str] = []
 
@@ -77,9 +76,11 @@ class Parser:
     def parse_command(self) -> CommandExpr:
         target = self.parse()
 
+        
         if self.intent and registry_commands.get(self.intent):
             raw_text = registry_commands[self.intent]["raw_text"]
-
+            
+        # If the raw_text is true in a intent, clear the target of any ignored words
             if raw_text:
                 target = self.clear(target)
 

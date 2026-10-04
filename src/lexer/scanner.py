@@ -10,14 +10,14 @@ from symspellpy import SymSpell, Verbosity
 
 _SYM_SPELL_INSTANCE = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
 _dict_ref = importlib.resources.files("symspellpy") / "frequency_dictionary_en_82_765.txt"
-
 with importlib.resources.as_file(_dict_ref) as path:
     _SYM_SPELL_INSTANCE.load_dictionary(str(path), term_index=0, count_index=1)
+
     
 #translate a string into a list of tokens
 class Scanner:
     def __init__(self, text: str):
-        self.text: str = self.text_correction(text)
+        self.text: str = text
         self.current: int = 0
         self.tokens: list[Token] = []
         self.sym_spell = _SYM_SPELL_INSTANCE
@@ -52,6 +52,7 @@ class Scanner:
                 c = self.advance()
         
             try:
+                buffer = self.text_correction(buffer)
                 token_type = TokenType(buffer)
 
             except ValueError:
