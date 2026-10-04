@@ -5,7 +5,6 @@ which are not—treating ordinary words (non-tokens) as identifiers. Afterward, 
 """
 
 from src.lexer.token import *
-import jellyfish
 import importlib.resources
 from symspellpy import SymSpell, Verbosity
 

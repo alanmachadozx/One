@@ -1,28 +1,63 @@
 
+from typing import TypedDict
+
+class CommandConfig(TypedDict):
+    raw_text: bool
+    ignore_words: list[str]
+
 #A dictionary containing all commands, where each command has a "tag" (raw_text). 
 #If the tag is True, the command must not be cleaned/filtered by the clear_target() function.
-registry_commands = {
-    "open": {"raw_text": False},
-    "close": {"raw_text": False},
-    "search": {"raw_text": True},
-    "gemini": {"raw_text": True},
-    "view tasks": {"raw_text": False},
-    "view history": {"raw_text": False},
-    "create task": {"raw_text": True},
-    "play music": {"raw_text": True},
-    "update": {"raw_text": False},
-    "next music": {"raw_text": False},
-    "stop music": {"raw_text": False},
-    "start music": {"raw_text": False},
-    "up volume": {"raw_text": False},
-    "down volume": {"raw_text": False},   
-}
-
-#The tokens that will be discarded when clear-target() is executed
-trash_tokens = {
-    "a",
-    "an",
-    "the",
-    "on",
-    "for",
+registry_commands: dict[str, CommandConfig]= {
+    "OPEN_APP": {
+        "raw_text": True,
+        "ignore_words": ["open", "the", "launch", "start"]
+    },
+    "CLOSE_APP": {
+        "raw_text": True,
+        "ignore_words": ["close", "the", "quit", "exit"]
+    },
+    "SEARCH": {
+        "raw_text": True,
+        "ignore_words": ["search", "find", "look", "google", "in", "for", "web", "about"]
+    },
+    "ASK_GEMINI": {
+        "raw_text": True,
+        "ignore_words": ["one", "gemini"]
+    },
+    "VIEW_TASKS": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "VIEW_HISTORY": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "ADD_TASK": {
+        "raw_text": True,
+        "ignore_words": ["add", "task", "create", "new", "make"]
+    },
+    "PLAY_MUSIC": {
+        "raw_text": True,
+        "ignore_words": ["play", "listen", "start"]
+    },
+    "UPDATE": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "NEXT_MUSIC": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "STOP_MUSIC": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "UP_VOL": {
+        "raw_text": False,
+        "ignore_words": []
+    },
+    "DOWN_VOL": {
+        "raw_text": False,
+        "ignore_words": []
+    },
 }

@@ -15,6 +15,7 @@ from src.parser.parser import *
 from src.ast.checker import ast_checker
 from src.audio.speech import speech, transcribe_audio
 import src.state as state
+from src.classifier.model import *
 
 vad = webrtcvad.Vad(2) #set aggressiveness mode
 
@@ -96,10 +97,14 @@ def start_listerning(event_status: threading.Event):
                             speech("One is awake.")
     
                         elif not is_sleeping:
+                            classifier = Classifier()
+                            intent_object = classifier.get_intent(text)
+                            intent = intent_object.intent
+                            
                             scanner = Scanner(text)
                             scanner.scan()
         
-                            parser = Parser(scanner.tokens)
+                            parser = Parser(scanner.tokens, intent)
                             ast_root = parser.parse_command()
         
                             if ast_root:
