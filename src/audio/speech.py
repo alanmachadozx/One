@@ -26,8 +26,18 @@ def speech(text: str):
 
     time.sleep(0.4)
 
+def clean_text(text: str) -> str:
+    cleaned = text.strip()\
+        .replace(".", "")\
+        .replace(",", "")\
+        .replace("!", "")\
+        .replace("?", "")\
+        .replace(";", "")\
+        .lower()
+    return cleaned
+
 def transcribe_audio(audio):
-    prompts = "open, close, play, search, volume, start, stop, music, gemini, up, down, task, create, view"
+    prompts = "close, search, start, gemini, up, down, task, create, view"
     segments, _ = model.transcribe(
         audio, 
         language="en",
@@ -40,14 +50,13 @@ def transcribe_audio(audio):
         log_prob_threshold=-1.0,
         initial_prompt=prompts,
        )
-    text = None
+    text_cleaned = None
     
     for segment in segments:
-        clean_text = segment.text.strip().replace(".", "").replace(",", "").lower()
-        print(clean_text)
-        text = segment.text.strip()
+        text_cleaned = clean_text(segment.text)
+        print(text_cleaned)
 
-    return text
+    return text_cleaned
 
 @contextlib.contextmanager
 def limited_hear():
@@ -77,5 +86,5 @@ def ask_user(ask: str) -> str:
 
             text = transcribe_audio(audio_chunk)
             if text:
-                 return text.lower().strip().replace(".", "").replace(",", "")
+                 return text
 

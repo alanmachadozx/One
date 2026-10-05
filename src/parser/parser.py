@@ -5,15 +5,16 @@ The parser is where the distinction is made between elements conveying an intend
 """
 
 from src.lexer.token import Token, TokenType
-from src.commands.registry import registry_commands, trash_tokens
+from src.commands.registry import registry_commands
+from src.classifier.model import *
 
 class CommandExpr:
         pass
 
 class SingleAction(CommandExpr):
-    def __init__(self, action: str | None, target: str):
+    def __init__(self, intent: str | None, target: str):
         self.target: str = target
-        self.action: str | None = action
+        self.intent: str | None = intent
 
 class SequenceAction(CommandExpr):
     def __init__(self, left: CommandExpr, operator: str, right: CommandExpr):
@@ -22,21 +23,16 @@ class SequenceAction(CommandExpr):
         self.right: CommandExpr = right
 
 class Parser:
-    def __init__(self, tokens: list[Token]):
+    def __init__(self, tokens: list[Token], intent: str | None):
         self.tokens: list[Token] = tokens
         self.current_token: int = 0
-        self.actions: set[TokenType] = { #picks all token types except AND and IDENTIFIER
-            t for t in TokenType if t not in (TokenType.AND, TokenType.IDENTIFIER)
-        }
+        self.intent: str | None = intent
 
     def peek(self) -> Token:
         return self.tokens[self.current_token]
     
     def advance(self):
         self.current_token += 1
-
-    def peek_next(self) -> Token:
-        return self.tokens[self.current_token + 1]
 
     def previous(self) -> Token:
         return self.tokens[self.current_token - 1]
@@ -54,54 +50,34 @@ class Parser:
             return True
         return False
 
-    def is_action(self):
-        if self.current_token >= len(self.tokens):
-            return False
-        return self.peek().type in self.actions
-
-    def next_is_action(self):
-        if self.current_token + 1 >= len(self.tokens):
-            return False
-        return self.peek_next().type in self.actions
-
-    def valid_action(self):
-        action = None
-        target: list[str] = []
-
-        while self.current_token < len(self.tokens):
-            if self.is_action():
-                #splits the structure into {"action", "target"},
-                #transforms two action tokens into a single action if it is a compound command, like "create task"
-                if self.next_is_action():
-                    action = self.peek().lexeme + " " + self.peek_next().lexeme
-                    self.current_token += 2
-                    break
-                else:
-                    action = self.peek().lexeme
-                    self.advance()
-                    break
-            self.advance()
-            
-        target = self.parse().copy()
-        
-        #It deals with cases where, instead of two commands connected by an AND operator,
-        #there is a single command with a target containing the `and` token. 
-        #If the next token is an action, the parser treats it as two separate commands.
-        if self.check("and") and not self.next_is_action():
-            target.append(self.peek().lexeme)
-            self.advance()
-            target = target + self.parse()
-
-        return action, target
-    #Removes tokens that do not contribute to the interpretation of the provided command,
-    #for example: "the", "a", "an", "for", among others.
-    def clear_target(self, buffer: list[str]):
+    # Clears the buffer, removing any words that should be ignored
+    # based on the current intent
+    def clear(self, buffer: list[str]):
         clear_target: list[str] = []
+
+        if not self.intent:
+            return buffer
+            
+        ignore_words: list[str] = registry_commands[self.intent].get("ignore_words", [])
         for i in buffer:
-            if i not in trash_tokens:
+            if i not in ignore_words:
                 clear_target.append(i)
         return clear_target
 
+    def define_target(self) -> str:
+        buffer = self.parse()
+
+        if self.intent and registry_commands.get(self.intent):
+            raw_text = registry_commands[self.intent].get("raw_text", False)
+            
+        # If the raw_text is true in a intent, clear the target of any ignored words
+            if raw_text:
+                buffer = self.clear(buffer)
+
+        target = " ".join(buffer)
+        return target
+
+        
     def parse(self):
         buffer: list[str] = []
 
@@ -112,25 +88,28 @@ class Parser:
         return buffer
 
     def parse_command(self) -> CommandExpr:
-        action, target = self.valid_action()
+        target = self.define_target()
+        first_intent = self.intent
 
-        #Check whether the action requires a direct target or a target with context, for example:
-        #"Gemini, what day is it?" is a target with context.
-        if action and registry_commands.get(action):
-            raw_text = registry_commands[action]["raw_text"]
-
-            #If context is not needed, remove the tokens that will not aid in interpreting the command.
-            if not raw_text:
-                target = self.clear_target(target)
-
-        target = " ".join(target)
-        
-        left = SingleAction(action, target)
-
-        if self.match("and"):
+        while self.match("and"):
             operator = self.previous().lexeme
-            right = self.parse_command()
+            position = self.current_token
+
+            buffer = self.parse()
+            text = " ".join(buffer)
             
-            return SequenceAction(left, operator, right)
-        
-        return left
+            classifier = Classifier()
+            intent_object = classifier.get_intent(text)
+            
+            if intent_object.intent == "UNKNOWN":
+                target = target + " "+ operator + " " + text
+            else:
+                self.intent = intent_object.intent
+                self.current_token = position
+
+                left = SingleAction(first_intent, target)
+                right = self.parse_command()
+
+                return SequenceAction(left, operator, right)
+
+        return SingleAction(first_intent, target)

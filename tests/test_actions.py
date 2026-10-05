@@ -8,18 +8,29 @@ to execute: python -m unittest tests/test_actions.py
 """
 
 import unittest
-from src.commands.actions import *
+from src.ast.checker import *
+from src.classifier.model import *
+from src.lexer.scanner import *
 
 class TestActions(unittest.TestCase):
 
     def test_actions(self):
-        action = "search for" 
-        target = "Led Zeppelin is the best band of all time?"
+        command = "open firefox and open kitty"
 
-        print(f'actions: {action}, target: {target}')
-        actions = Actions()
-        actions.process(action, target)
+        print(f'command: {command}')
+        classifier = Classifier()
+        intent_object = classifier.get_intent(command)
+        intent = intent_object.intent
+        print(f'intent: {intent}')
+        
+        scanner = Scanner(command)
+        scanner.scan()
 
+        parser = Parser(scanner.tokens, intent)
+        ast_root = parser.parse_command()
+
+        if ast_root:
+            ast_checker(ast_root)
 if __name__ == '__main__':
     unittest.main()
         
