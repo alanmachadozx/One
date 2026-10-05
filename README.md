@@ -1,58 +1,148 @@
 # One
+
 ![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 
-One is a Python-based project designed to act as a voice assistant capable of understanding and executing commands such as opening the browser or terminal, adjusting the volume, and various other tasks. The goal is to provide a lightweight assistant that runs in the background, waiting for commands—potentially eliminating the need to download resource-heavy AI systems for simple tasks.
+One is a Python-based voice assistant designed to interpret spoken commands and execute actions on the system. It combines real-time audio processing, speech transcription, intent classification, and a command parser to support practical assistant routines such as opening applications, searching the web, controlling media playback, and managing tasks.
 
-## System Architecture
+## Overview
 
-The system operates using the **Producer-Consumer** pattern, ensuring the application's main loop never freezes during audio capture and processing:
+One is built to work as a local voice assistant for desktop environments. The system listens for speech, identifies when a user has stopped speaking, transcribes the audio into text, and classifies the user intent before executing the corresponding command.
 
-* **Producer (Capture & VAD):** An audio callback runs in the background, analyzing 30ms chunks (480 samples at 16kHz). A state machine tracks the duration of silence. Once a phrase is complete (e.g., 450ms of continuous silence), the audio segments are merged.
-* **Safe Buffer (Queue):** The consolidated audio is packaged and sent to a `queue.Queue()`, ensuring secure transfer from the capture thread to the main thread.
-* **Consumer (Transcription):** The main loop consumes packets from the queue and triggers the Faster Whisper model (CPU-optimized with `compute_type="int8"`) to generate clean text.
-* **Action Executor:** The formatted text is passed to the `Actions` class, which interprets and executes the corresponding system command.
-* **Context analyzer:** A lexer and parser that receives the command before execution and checks for a connective, for example, in `"open firefox and open kitty,"` it detects the connective and interprets it as two separate commands.
+This architecture is intended to be extensible: new commands can be added by expanding the action handlers and command classification logic.
 
-## What works today?
+## Architecture
 
-* Command to play a specific song by saying: "play (music name)", (I will add an explanation of how to do this in the future.)
-* Commands to open Firefox and Kitty (if yours are different, you can specify the browser and terminal you use simply by changing the names in the respective functions).
-* Player control commands, such as: increase volume, decrease volume, pause music, start music, and next track.
-* The ability to update the system via voice commands is configured for Arch-based Linux distributions, but you can also modify it to suit your specific distribution.
-* You can ask Gemini anything by saying "Gemini" followed by your question. You need to create an API key in Google AI Studio.
+The application follows a producer-consumer design:
 
-## Possible future implementations
+1. Audio capture and VAD
+   - Audio is captured continuously in a background thread.
+   - Voice Activity Detection (VAD) is used to determine when speech is occurring.
+   - The system processes short audio frames and detects when a phrase is complete.
 
-* Search for videos on YouTube.
-* An algorithm where you pass a few arguments in the way you usually speak.
-* An interface.
-* The ability to execute commands on another computer of yours. For example, you leave One running on one PC, and when you issue a command, it sends it to your other PC.
-  
-##  Installation and Configuration
+2. Safe audio buffering
+   - Captured audio is sent to a queue for thread-safe transfer.
+   - This prevents the listener thread from blocking the main processing loop.
 
+3. Speech transcription
+   - The queued audio is converted into text using Faster Whisper.
+   - Transcription is configured for English and optimized for CPU execution.
+
+4. Intent classification
+   - The transcribed text is passed to a classifier trained with scikit-learn.
+   - The classifier assigns the user request to a known command category such as open app, search, play music, or task management.
+
+5. Parsing and validation
+   - The command is tokenized by a lexer.
+   - A parser creates an AST-like structure representing the requested operation.
+   - The structure is validated before execution.
+
+6. Action execution
+   - Valid commands are routed to the Action layer, which performs system operations such as opening apps, launching searches, or controlling media playback.
+
+## Features
+
+One currently supports a set of practical voice-driven actions:
+
+- Open and close applications
+- Search the web using the browser
+- Ask Gemini a question using the Google GenAI API
+- Play specific songs through Spotify integration
+- Control media playback: next, pause, resume, stop
+- Increase or decrease system volume
+- View and create tasks
+- View command history
+- Enable sleep and wake modes
+- Trigger system update commands on Arch-based Linux systems
+
+## Project Structure
+
+```text
+One/
+├── database/
+├── front-end/
+├── src/
+│   ├── ast/
+│   ├── audio/
+│   ├── classifier/
+|       └── dataset/
+│   ├── commands/
+│   ├── lexer/
+│   ├── parser/
+├── tests/
+├── .github/
+|     └── workflows/
+```
+
+## Dependencies
+
+The project depends on several Python libraries and system tools:
+
+    Python 3.8+
+    sounddevice
+    webrtcvad
+    numpy
+    gTTS
+    faster-whisper
+    spotipy
+    scikit-learn
+    slint
+    symspellpy
+    dotenv
+
+## Installation
 ### Prerequisites
-* **Python 3.8+**
-* System dependencies for audio hardware (e.g., `portaudio19-dev` on Linux).
 
-### Step-by-Step
+Before starting, make sure you have:
 
-1. Clone the repository:
-```
-git clone https://github.com/alanmachadozx/One.git
-cd One
-```
-2. Create and activate a virtual environment (recommended):
-```
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```  
-3. Install the listed dependencies:
-```
-pip install -r requirements.txt
-```
-4. Start the main module to activate the microphone and the listening engine:
-```
-python main.py
-```
+  - Python 3.8 or newer installed
+  - A working microphone
+  - A compatible audio backend on the operating system
+
+### 1- Clone the project
+
+  ```bash
+ git clone https://github.com/alanmachadozx/One.git
+ cd One
+  ```
+
+### 2- Create a virtual environment
+
+  ```bash
+  python -m venv venv
+  ```
+ #### Activate it:
+
+   - On Linux/macOS:
+     
+   ```bash
+   source venv/bin/activate
+   ```
+   - On Windows:
+   
+   ```bash
+   venv\Scripts\activate
+   ```
+### 3- Install dependencies
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+### 4- Configure environment variables
+    
+   ```bash
+   cp .env.example .env
+   ```
+ #### Then edit .env and add your credentials:
+ 
+   ```bash
+    SPOTIPY_CLIENT_ID="your_client_id"
+    SPOTIPY_CLIENT_SECRET="your_client_secret"
+    SPOTIPY_REDIRECT_URI="http://localhost:8888/callback"
+    GEMINI_API_KEY="your_api_key"
+   ```
+### 5- Run the application
+
+  ```bash
+   python -m src.main
+  ```
