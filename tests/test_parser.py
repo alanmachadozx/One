@@ -47,7 +47,7 @@ class TestParser(unittest.TestCase):
     # there is a single command with a target containing the `and` token.
     # Note: If the next token is an action, the parser will treat it as two separate commands.
     def test_and_in_context(self):
-        text = "hello, good morning"
+        text = "one, hello, good morning and have a great day"
         parser = self.parser_result(text)
         
         print("\n########### AND in context test ###########")

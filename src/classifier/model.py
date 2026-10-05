@@ -6,8 +6,8 @@ This file provides an intent classification model using a Naive Bayes classifier
 import joblib
 from sklearn.externals.array_api_compat.numpy import concat
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
 from dataclasses import dataclass
 
 @dataclass
@@ -16,7 +16,7 @@ class IntentResult:
     confidence: float
 
 class Classifier:
-    def __init__(self, path: str | None = "src/classifier/model.joblib", threshold: float = 0.12):
+    def __init__(self, path: str | None = "src/classifier/model.joblib", threshold: float = 0.11):
         self.pipeline = None
         if path:
             self.model = self.load(path)
@@ -27,7 +27,7 @@ class Classifier:
     def train(self, text: list[str], labels: list[str]):
         self.pipeline = make_pipeline(
             TfidfVectorizer(ngram_range=(1, 2)), 
-            MultinomialNB()
+            LogisticRegression(max_iter=1000)
         )
         # Fit the pipeline on the text and labels.
         self.pipeline = self.pipeline.fit(text, labels)

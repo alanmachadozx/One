@@ -15,12 +15,13 @@ from src.lexer.scanner import *
 class TestActions(unittest.TestCase):
 
     def test_actions(self):
-        command = "search for Led Zeppelin is the best band of all time?"
+        command = "open firefox and open kitty"
 
         print(f'command: {command}')
         classifier = Classifier()
         intent_object = classifier.get_intent(command)
         intent = intent_object.intent
+        print(f'intent: {intent}')
         
         scanner = Scanner(command)
         scanner.scan()

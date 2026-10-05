@@ -22,7 +22,7 @@ registry_commands: dict[str, CommandConfig]= {
     },
     "ASK_GEMINI": {
         "raw_text": True,
-        "ignore_words": ["one", "gemini"]
+        "ignore_words": ["one", "gemini", "ai"]
     },
     "VIEW_TASKS": {
         "raw_text": False,
@@ -39,7 +39,7 @@ registry_commands: dict[str, CommandConfig]= {
     },
     "PLAY_MUSIC": {
         "raw_text": True,
-        "ignore_words": ["play", "listen", "start"]
+        "ignore_words": ["play", "listen", "start", "music"]
     },
     "UPDATE": {
         "raw_text": False,
