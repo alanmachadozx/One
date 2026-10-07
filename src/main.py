@@ -2,10 +2,9 @@ from src.listener import *
 import slint
 import os
 import threading
-from src.commands.speech import speech
 
 path = os.path.dirname(os.path.abspath(__file__))
-slint_path = os.path.join(path, '..', 'front-end', 'app-window.slint')
+slint_path = os.path.join(path, '..', 'frontend', 'app-window.slint')
 
 #load the ui
 ui = slint.load_file(slint_path)
