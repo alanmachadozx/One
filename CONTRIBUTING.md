@@ -14,7 +14,6 @@ If you are interested in the project and wish to contribute, this document will 
 - [Making a Fork](#making-a-fork)
 - [Pull Request Process](#pull-request-process)
 - [Testing Your Changes](#testing-your-changes)
-- [Need Help?](#need-help)
 
 ## Project Structure
 The project is structured as follows:
