@@ -1,3 +1,11 @@
+"""
+This is the core part of the code: speech is captured, 
+and the resulting bytes are stored in a list (q). 
+The data then passes through a transcription function that converts it into text (in English). 
+Once converted, the text is processed by a Lexer/Parser/AST structure;
+within the AST, it undergoes a conditional check to determine whether it constitutes a valid command.
+"""
+
 import sounddevice as sd
 from src.commands.actions import *
 import numpy as np
@@ -5,10 +13,11 @@ import webrtcvad
 from src.lexer.scanner import *
 from src.parser.parser import *
 from src.ast.checker import ast_checker
-from src.commands.speech import speech, transcribe_audio
+from src.audio.speech import speech, transcribe_audio
 import src.state as state
+from src.classifier.model import *
 
-vad = webrtcvad.Vad(3) #set aggressiveness mode, where 3 is the most agressive
+vad = webrtcvad.Vad(2) #set aggressiveness mode
 
 SAMPLERATE = 16000
 FRAMEDURATION = 30 #ms
@@ -73,27 +82,29 @@ def start_listerning(event_status: threading.Event):
                     continue
 
 
-                is_processing = True
+                state.is_processing = True
                 
                 try:
                     text = transcribe_audio(audio_chunk)
         
                     if text:
-                        formatted_text = text.lower().strip().replace(".", "").replace(",", "")
-    
-                        if formatted_text == "sleep":
+                        if text == "sleep":
                             is_sleeping = True
                             speech("One is sleeping.")
     
-                        elif formatted_text == "wake":
+                        elif text == "wake":
                             is_sleeping = False
                             speech("One is awake.")
     
                         elif not is_sleeping:
-                            scanner = Scanner(formatted_text)
+                            classifier = Classifier()
+                            intent_object = classifier.get_intent(text)
+                            intent = intent_object.intent
+                            
+                            scanner = Scanner(text)
                             scanner.scan()
         
-                            parser = Parser(scanner.tokens)
+                            parser = Parser(scanner.tokens, intent)
                             ast_root = parser.parse_command()
         
                             if ast_root:

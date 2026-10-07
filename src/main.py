@@ -1,4 +1,6 @@
-from src.listener import *
+# This is where the connection between `start_listening()` and the interface is made.
+
+from src.audio.listener import *
 import slint
 import os
 import threading

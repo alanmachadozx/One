@@ -1,6 +1,10 @@
+
+"""
+The AST checks if it is a SequenceActions; if so, it checks the left and right nodes.
+If it is a SingleActions, it forwards it to the Actions class.
+"""
 from src.parser.parser import *
 from src.commands.actions import *
-from database.db import *
 
 command_execute = Actions()
 
@@ -11,6 +15,6 @@ def ast_checker(node: CommandExpr):
         ast_checker(node.left)
         ast_checker(node.right)
 
-    if isinstance(node, SingleAction) and node.action:
-        command_execute.process(node.action, node.target)
+    if isinstance(node, SingleAction) and node.intent:
+        command_execute.process(node.intent, node.target)
         

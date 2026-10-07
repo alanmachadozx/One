@@ -1,37 +1,38 @@
-from numpy.core.numeric import nextafter
+
+"""
+The parser is where the distinction is made between elements conveying an intended action and those that merely complement the sentence 
+(such as *and*, *in*, *to*, *on*). Furthermore, the command is separated into a target and an action.
+"""
 
 from src.lexer.token import Token, TokenType
+from src.commands.registry import registry_commands
+from src.classifier.model import *
 
 class CommandExpr:
         pass
 
 class SingleAction(CommandExpr):
-    def __init__(self, action: str | None, target: str):
-        self.target = target
-        self.action = action
+    def __init__(self, intent: str | None, target: str):
+        self.target: str = target
+        self.intent: str | None = intent
 
 class SequenceAction(CommandExpr):
     def __init__(self, left: CommandExpr, operator: str, right: CommandExpr):
-        self.left = left
-        self.operator = operator
-        self.right = right
+        self.left: CommandExpr = left
+        self.operator: str = operator
+        self.right: CommandExpr = right
 
 class Parser:
-    def __init__(self, tokens: list[Token]):
-        self.tokens = tokens
-        self.current_token = 0
-        self.actions = { #picks all token types except AND and IDENTIFIER
-            t for t in TokenType if t not in (TokenType.AND, TokenType.IDENTIFIER)
-        }
+    def __init__(self, tokens: list[Token], intent: str | None):
+        self.tokens: list[Token] = tokens
+        self.current_token: int = 0
+        self.intent: str | None = intent
 
     def peek(self) -> Token:
         return self.tokens[self.current_token]
     
     def advance(self):
         self.current_token += 1
-
-    def peek_next(self) -> Token:
-        return self.tokens[self.current_token + 1]
 
     def previous(self) -> Token:
         return self.tokens[self.current_token - 1]
@@ -49,18 +50,36 @@ class Parser:
             return True
         return False
 
-    def is_action(self):
-        if self.current_token >= len(self.tokens):
-            return False
-        return self.peek().type in self.actions
+    # Clears the buffer, removing any words that should be ignored
+    # based on the current intent
+    def clear(self, buffer: list[str]):
+        clear_target: list[str] = []
 
-    def next_is_action(self):
-        if self.current_token + 1 >= len(self.tokens):
-            return False
-        return self.peek_next().type in self.actions
+        if not self.intent:
+            return buffer
+            
+        ignore_words: list[str] = registry_commands[self.intent].get("ignore_words", [])
+        for i in buffer:
+            if i not in ignore_words:
+                clear_target.append(i)
+        return clear_target
 
+    def define_target(self) -> str:
+        buffer = self.parse()
+
+        if self.intent and registry_commands.get(self.intent):
+            raw_text = registry_commands[self.intent].get("raw_text", False)
+            
+        # If the raw_text is true in a intent, clear the target of any ignored words
+            if raw_text:
+                buffer = self.clear(buffer)
+
+        target = " ".join(buffer)
+        return target
+
+        
     def parse(self):
-        buffer = []
+        buffer: list[str] = []
 
         while self.current_token < len(self.tokens) and not self.check("and"):
             buffer.append(self.peek().lexeme)
@@ -69,34 +88,28 @@ class Parser:
         return buffer
 
     def parse_command(self) -> CommandExpr:
-        action = None
-        target = " "
-        
-        if self.is_action():
-            #splits the structure into {"action", "target"},
-            #transforms two action tokens into a single action if it is a compound command, like "create task"
-            if self.next_is_action():
-                action = self.peek().lexeme + " " + self.peek_next().lexeme 
-            else:
-                action = self.peek().lexeme
-                
-            self.advance()
-            target = " ".join(self.parse())
-            
-        else:
-            target = " ".join(self.parse())
+        target = self.define_target()
+        first_intent = self.intent
 
-        if self.check("and") and not self.next_is_action():
-            target = target + " " + " ".join(self.peek().lexeme)
-            self.advance()
-            target = target + " " + " ".join(self.parse())
-            
-        left = SingleAction(action, target)
-
-        if self.match("and"):
+        while self.match("and"):
             operator = self.previous().lexeme
-            right = self.parse_command()
+            position = self.current_token
+
+            buffer = self.parse()
+            text = " ".join(buffer)
             
-            return SequenceAction(left, operator, right)
-        
-        return left
+            classifier = Classifier()
+            intent_object = classifier.get_intent(text)
+            
+            if intent_object.intent == "UNKNOWN":
+                target = target + " "+ operator + " " + text
+            else:
+                self.intent = intent_object.intent
+                self.current_token = position
+
+                left = SingleAction(first_intent, target)
+                right = self.parse_command()
+
+                return SequenceAction(left, operator, right)
+
+        return SingleAction(first_intent, target)

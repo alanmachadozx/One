@@ -3,3 +3,7 @@ webrtcvad
 sounddevice
 numpy
 spotipy
+symspellpy
+jellyfish
+slint
+scikit-learn

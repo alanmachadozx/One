@@ -1,3 +1,8 @@
+
+"""
+This module contains the APIs for interacting with the Gemini and Spotify APIs.
+"""
+
 import time
 from google import genai
 from google.genai.errors import APIError
@@ -11,7 +16,7 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
-def ask_gemini(text, retries=3):
+def ask_gemini(text: str, retries=3):
     for attempt in range(retries):
         try:
             response = client.models.generate_content(
