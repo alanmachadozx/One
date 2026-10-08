@@ -31,7 +31,6 @@ To explore the exact training phrases, intent classes, and underlying categories
 * **Direct Actions:** Single-intent commands such as `"open"`, `"search"`, `"play"`, or `"stop"`.
 * **Compound / Chained Commands:** You can string multiple actions together using the `and` operator. For instance:
   > *"open firefox and open kitty"*
-  > *"open spotify and search for who is the best rock band of all time?"*
 * **State Control Commands:** You can pause listening or put the assistant to sleep by saying `"sleep"`, and resume by saying `"wake"`.
 
 ---
