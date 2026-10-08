@@ -1,6 +1,6 @@
 # External APIs Integration Module
 
-This module manages external third-party service integrations for the "One" project, specifically handling generative AI capabilities via Google Gemini and media playback control via Spotify, as implemented in `apis.py`.
+This module manages external third-party service integrations for the "One" project, specifically handling generative AI capabilities via Google Gemini and media playback control via Spotify, as implemented in [apis.py](../src/commands/apis.py).
 
 ## Requirements and Environment Configuration
 

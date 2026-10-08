@@ -5,6 +5,12 @@
 
 One is a Python-based voice assistant designed to interpret spoken commands and execute actions on the system. It combines real-time audio processing, speech transcription, intent classification, and a command parser to support practical assistant routines such as opening applications, searching the web, controlling media playback, and managing tasks.
 
+## Documentation Map
+
+- [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md)
+- [CONTRIBUTING](CONTRIBUTING.md))
+- [docs/introduction](docs/introduction.md)
+
 ## Overview
 
 One is built to work as a local voice assistant for desktop environments. The system listens for speech, identifies when a user has stopped speaking, transcribes the audio into text, and classifies the user intent before executing the corresponding command.
@@ -59,6 +65,7 @@ One currently supports a set of practical voice-driven actions:
 
 ```text
 One/
+├── docs/
 ├── database/
 ├── front-end/
 ├── src/

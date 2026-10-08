@@ -1,6 +1,6 @@
 # Database Management 
 
-The `db.py` module serves as the dedicated SQLite database interface for the "One" project. To ensure smooth performance and avoid blocking the main application flow, the database connection and all its operations run entirely on a separate background daemon thread, independently from the UI and the audio listener pipeline.
+The [db.py](../database/db.py) module serves as the dedicated SQLite database interface for the "One" project. To ensure smooth performance and avoid blocking the main application flow, the database connection and all its operations run entirely on a separate background daemon thread, independently from the UI and the audio listener pipeline.
 
 ## Thread-Safe Execution Architecture
 
